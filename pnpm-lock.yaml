@@ -9,7 +9,7 @@ specifiers:
   eslint-plugin-node: ^11.1.0
   eslint-plugin-react: ^7.31.10
   prettier: ^2.8.1
-  replugged: ^4.2.1
+  replugged: ^4.2.2
   typescript: ^4.8.4
 
 devDependencies:
@@ -21,7 +21,7 @@ devDependencies:
   eslint-plugin-node: 11.1.0_eslint@8.25.0
   eslint-plugin-react: 7.31.10_eslint@8.25.0
   prettier: 2.8.1
-  replugged: 4.2.1
+  replugged: 4.2.3
   typescript: 4.8.4
 
 packages:
@@ -3576,8 +3576,8 @@ packages:
       rc: 1.2.8
     dev: true
 
-  /replugged/4.2.1:
-    resolution: {integrity: sha512-F4AIb8/Etu36QWbPrF311I5yPdZOj6OuPrZ8BOxE7yOtberyfoDcuTq3RmuGxsA+/oorNi9sIwr5N80PJoo7pA==}
+  /replugged/4.2.3:
+    resolution: {integrity: sha512-11X9a07lf1CqEqEbM6Clw7I+jMnSkH1v1ZEVtM7XBFbyFNqThCKiSTuN4VaG7MoFi0smyxsfozL5wzCvL8a61w==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
