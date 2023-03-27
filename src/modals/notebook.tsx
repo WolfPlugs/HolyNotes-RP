@@ -1,15 +1,15 @@
 import { common, components, webpack } from "replugged";
 
-const { Modal, Flex, Divider, FormItem, TextInput } = components;
+const { Modal, Flex, Divider, ErrorBoundary, TextInput, Text } = components;
 const { React } = common;
 const { openModal, closeModal } = common.modal;
 
-const { tabBarContainer } = webpack.getByProps('tabBarContainer')
-
+const { tabBarContainer } = webpack.getByProps("tabBarContainer");
 
 import HelpModal from "../modals/helpModal";
 import HelpIcon from "../icons/helpIcon";
 import noteHandlers from "../noteHandler/index";
+import noResultsMessage from "./noResultsMessage";
 
 const noteBookRender = ({
   notes,
@@ -21,7 +21,7 @@ const noteBookRender = ({
 }) => {
   console.log("this right now");
   if (Object.keys(notes).length === 0) {
-    return <div className="notebook-empty">No notes found</div>;
+    return <noResultsMessage error={false} />;
   } else {
     let messageArray;
     // sortType ?
@@ -31,50 +31,31 @@ const noteBookRender = ({
 };
 
 export const NoteModal = (props) => {
-  const [searchInput, setSearch] = React.useState('');
-  // const [currentNotebook, setCurrentNotebook] = React.useState('Main')
-  const notes = noteHandlers.getNotes();
+  const [searchInput, setSearch] = React.useState("");
+  const [currentNotebook, setCurrentNotebook] = React.useState("Main");
+  const notes = noteHandlers.getNotes()[currentNotebook];
   if (!notes) return <></>;
   return (
     <Modal.ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
-      <Flex
-        className={`notebook-flex`}
-        direction='VERTICAL'
-        style={{ width: "100%" }}>
-        <Divider className={tabBarContainer}>
-          <Modal.ModalHeader className={`notebook-header-main`}>
-            <FormItem tag="h4" className="notebook-heading">
-              NOTEBOOK
-            </FormItem>
-            <HelpIcon
-              className="help-icon"
-              name="HelpCircle"
-              onClick={() => openModal(HelpModal)}
-            />
-            <div style={{ marginBottom: "10px" }}>
-              <TextInput
-                autofocus={false}
-                placeholder='Search for a message...'
-                onChange={(e) => setSearch(e)}
-              />
-            </div>
-            <Modal.ModalCloseButton onClick={closeModal} />
-          </Modal.ModalHeader>
-          <Divider>
-            {/* <TabBar
-            className={`${Classes.TabBar.tabBar} notebook-tabbar`}
-            selectedItem={currentNotebook}
-            type={TabBar.Types.TOP}
-            onItemSelect={setCurrentNotebook}>
-            {Object.keys(NotesHandler.getNotes()).map(notebook =>
-              <TabBar.Item id={notebook} className={`${Classes.TabBarItem.tabBarItem} notebook-tabbar-item`}>
-                {notebook}
-              </TabBar.Item>
-            )}
-          </TabBar> */}
-          </Divider>
-        </Divider>
-        <Modal.ModalContent>
+      <Modal.ModalHeader>
+        <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }}>
+          NOTEBOOK
+        </Text>
+        <div onClick={() => openModal(HelpModal)}>
+          <HelpIcon className="help-icon" name="HelpCircle" />
+        </div>
+        <div style={{ marginBottom: "20px" }} className='notebook-search' >
+          <TextInput
+            autofocus={false}
+            placeholder="Search for a message..."
+            onChange={(e) => setSearch(e)}
+          />
+        </div>
+        <Modal.ModalCloseButton onClick={props.onClose} />
+      </Modal.ModalHeader>
+      <Modal.ModalContent style={{ marginTop: "20px" }}>
+        <ErrorBoundary>
+          <div>gg
           <Flex fade={true}>
             <noteBookRender
               notes={notes}
@@ -85,8 +66,9 @@ export const NoteModal = (props) => {
             // searchInput={searchInput}
             />
           </Flex>
-        </Modal.ModalContent>
-      </Flex>
+          </div>
+        </ErrorBoundary>
+      </Modal.ModalContent>
     </Modal.ModalRoot>
   );
 };

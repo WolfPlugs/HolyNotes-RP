@@ -47,16 +47,16 @@ export default new (class noteHandler {
     // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
   }
 
-  // public deleteNote = (note, notebook) => {
-  //   this.initNotes()
-  //   let notes
-  //   try { notes = this.getNotes() }
-  //   catch { return }
+  public deleteNote = (note, notebook) => {
+    this.initNotes()
+    let notes
+    try { notes = this.getNotes() }
+    catch { return }
 
-  //   delete notes[notebook][note]
+    delete notes[notebook][note]
 
-  //   fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
-  // }
+    // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
+  }
 
   // public moveNote = (note, toNotebook, fromNotebook) => {
   //   this.initNotes()

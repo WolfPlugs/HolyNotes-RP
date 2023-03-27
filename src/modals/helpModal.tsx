@@ -11,10 +11,9 @@ export default (props) => {
     <ModalRoot {...props} className="help-modal" size="medium">
       <ModalHeader>
         <FormItem tag="h3">Help Modal</FormItem>
-        <ModalCloseButton onClick={closeModal} />
+        <ModalCloseButton onClick={props.onClose} />
       </ModalHeader>
       <ModalContent>
-        <Slider fade={true}>
           <div className="help-markdown">
             <h4>Adding Notes</h4>
             <p>
@@ -44,10 +43,9 @@ export default (props) => {
               the note and hit "Jump to Message".
             </p>
           </div>
-        </Slider>
       </ModalContent>
       <ModalFooter>
-        <Button look={Button.Looks.LINK} color={Button.Colors.TRANSPARENT} onClick={closeModal}>
+        <Button look={Button.Looks.LINK} color={Button.Colors.TRANSPARENT} onClick={props.onClose}>
           Cancel
         </Button>
         <div className="notebook-display-left">
@@ -56,7 +54,6 @@ export default (props) => {
             color={Button.Colors.GREEN}
             onClick={() => {
               NotesHandler.refreshAvatars();
-              closeModal;
             }}>
             Refresh Avatars
           </Button>

@@ -3,6 +3,9 @@ import { Injector, Logger, common, components, settings, webpack } from "replugg
 import Note from "./icons/Note";
 import NoteButton from "./icons/NoteButton";
 import { NoteModal } from "./modals/notebook";
+
+// import "./style.scss";
+
 const { openModal } = common.modal;
 const { Tooltip } = components;
 
@@ -26,13 +29,14 @@ export async function start(): Promise<void> {
     const { toolbar } = args[0];
     // eslint-disable-next-line no-undefined
     if (toolbar.length === undefined) return res;
+
     toolbar.push(
       <Tooltip text={"Holy Notes"} position={"bottom"}>
         <div className={`note-button ${iconClasses.iconWrapper} ${iconClasses.clickable}`}>
           <NoteButton
             className={`note-button ${iconClasses.icon}`}
             onClick={() => {
-              openModal(NoteModal);
+              openModal((props) => <NoteModal {...props} />);
             }}
           />
         </div>
