@@ -3,29 +3,26 @@ import { Injector, Logger, common, components, settings, webpack } from "replugg
 import Note from "./icons/Note";
 import NoteButton from "./icons/NoteButton";
 import { NoteModal } from "./modals/notebook";
-
-const { React } = common;
-const { openModal } = common.modal
+const { openModal } = common.modal;
 const { Tooltip } = components;
 
 const inject = new Injector();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logger = Logger.plugin("HolyNotes");
-import { pluginSettings } from './noteHandler/settings'
+import { pluginSettings } from "./noteHandler/settings";
 
 export async function start(): Promise<void> {
-  const thenotemodal = await NoteModal;
-
-  const mod = await webpack.waitForModule(webpack.filters.bySource('HEADER_BAR).AnalyticsLocationProvider'));
+  const mod = await webpack.waitForModule(
+    webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
+  );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fnPropName = Object.entries(mod).find(([_, v]) => typeof v === "function")?.[0];
 
-  const iconClasses = webpack.getByProps('iconWrapper', 'clickable');
+  const iconClasses = webpack.getByProps("iconWrapper", "clickable");
 
-  injectNotesPops()
+  injectNotesPops();
   // @ts-ignore
   inject.after(mod, fnPropName, (args: any, res: any) => {
-    console.log(<thenotemodal />)
     const { toolbar } = args[0];
     // eslint-disable-next-line no-undefined
     if (toolbar.length === undefined) return res;
@@ -35,14 +32,14 @@ export async function start(): Promise<void> {
           <NoteButton
             className={`note-button ${iconClasses.icon}`}
             onClick={() => {
-              openModal((props) => <thenotemodal {...props} />);
+              openModal(NoteModal);
             }}
           />
         </div>
       </Tooltip>,
     );
 
-    return res
+    return res;
   });
 }
 
@@ -56,8 +53,8 @@ function injectNotesPops() {
       label: "Add Notes",
       icon: NoteButton,
       onClick: () => {
-        openModal(() => React.createElement())
-      }
-    }
-  })
+        openModal(() => <></>);
+      },
+    };
+  });
 }

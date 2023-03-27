@@ -1,4 +1,4 @@
 import { settings } from 'replugged'
 
 
-export const noteFiles = settings.init('notes', { 'Main': {}, })
+export const noteFiles = await settings.init('notes', { 'Main': {}, })
