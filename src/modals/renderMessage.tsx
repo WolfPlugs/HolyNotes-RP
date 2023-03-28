@@ -1,20 +1,42 @@
 import { common, webpack, components } from "replugged";
-
 import noteHandler from "../noteHandler";
-import { ContextMenu } from "replugged/dist/renderer/modules/common";
+import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 
+const { contextMenu: { open } } = common;
+const { FormItem } = components;
 const classes = webpack.getByProps("cozyMessage");
-const ChannelMessage = webpack.getBySource('flashKey', 'isHighlight')
-const Timestamp = webpack.getModule(m => m.exports?.prototype?.month && m.exports.prototype.toDate)
-const Message = webpack.getModule((m) => ["getReaction", "isSystemDM"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p])))
-const Channel = webpack.getModule((m) => ["getGuildId"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).Sf
+const ChannelMessage = webpack.getBySource('flashKey')
+
+
 const User = webpack.getModule((m) => ["tag"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).o
-const transitionTo = webpack.getBySource('.log("transitionTo - Transitioning to ".concat(').uL
+
+const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
+const RoutingUtils = {
+  transitionToChannel: webpack.getFunctionBySource(
+    RoutingUtilsModule,
+    "transitionTo - Transitioning to ",
+  ),
+}
+
+
+const Timestamp = await webpack.waitForModule<any>((m) =>
+  Boolean(getExportsForProto(m.exports, ["month", "toDate"])),
+);
+
+const Message = await webpack.waitForModule<any>((m) =>
+  Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
+);
+
+const Channel = await webpack.waitForModule<any>((m) =>
+  Boolean(getExportsForProto(m.exports, ["getGuildId"])),
+);
+
 // replugged.webpack.getModule((m) => ["getGuildId"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).Sf
 
 
 const { React, contextMenu, } = common;
 const { ErrorBoundary } = components;
+
 let isHoldingDelete;
 React.useEffect(() => {
 
@@ -31,6 +53,7 @@ React.useEffect(() => {
 }, [])
 
 export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) => {
+  console.log(note)
   return (
     <ErrorBoundary className='holy-note'>
       <ChannelMessage
@@ -57,7 +80,7 @@ export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) 
         onContextMenu={event => {
           if (!fromDeleteModal)
             return (
-              contextMenu.open(event, () =>
+              open(event, () =>
                 <NoteContextMenu
                   note={note}
                   notebook={notebook}
@@ -76,16 +99,16 @@ export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) 
 const NoteContextMenu = ({ note, notebook, updateParent, closeModal }) => {
   return <>
     <contextMenu onClose={contextMenu.close}>
-      <contextMenu.Item
+      <FormItem
         label='Jump to message' id='jump'
         action={() => {
-          transitionTo(`/channels/${note.guild_id ?? '@me'}/${note.channel_id}/${note.id}`)
+          RoutingUtils.transitionToChannel(`/channels/${note.guild_id ?? '@me'}/${note.channel_id}/${note.id}`)
           closeModal()
         }} />
-      <contextMenu.Item
+      <FormItem
         label='Copy Text' id='ctext'
-        action={() => copyText(note.content)} />
-      <contextMenu.Item
+        action={() => MyClipboardUtility.copyToClipboard(note.content)} />
+      <FormItem
         color='colorDanger'
         label='Delete Note' id='delete'
         action={() => {
@@ -93,12 +116,12 @@ const NoteContextMenu = ({ note, notebook, updateParent, closeModal }) => {
           updateParent()
         }} />
       {Object.keys(noteHandler.getNotes()).length !== 1 ?
-        <contextMenu.Item
+        <FormItem
           label='Move Note' id='move'>
-          {Object.keys(noteHandler.getNotes()).map(key => {
-            if (key != notebook) {
+          {Object.keys(noteHandler.getNotes()).map((key: string) => {
+            if (key !== notebook) {
               return (
-                <contextMenu.Item
+                <FormItem
                   label={`Move to ${key}`} id={key}
                   action={() => {
                     noteHandler.moveNote(note.id, notebook, key)
@@ -108,10 +131,10 @@ const NoteContextMenu = ({ note, notebook, updateParent, closeModal }) => {
             }
           }
           )}
-        </contextMenu.Item> : null}
-      <contextMenu.Item
+        </FormItem> : null}
+      <FormItem
         label='Copy Id' id='cid'
-        action={() => copyText(note.id)} />
+        action={() => MyClipboardUtility.copyToClipboard(note.id)} />
     </contextMenu>
   </>
 }

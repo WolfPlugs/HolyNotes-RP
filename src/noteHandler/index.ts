@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { noteFiles } from "./settings";
+import { noteFiles } from "./utils";
+import { common } from "replugged";
+
+const { lodash } = common;
+
 
 export default new (class noteHandler {
   public constructor() {
@@ -12,10 +16,44 @@ export default new (class noteHandler {
 
   public getNotes() {
     const thenoteFiles = this.initNotes();
-    return thenoteFiles.all();
+    return thenoteFiles.get('Main');
   }
 
-  public addNote(noteData, notebook) {
+  public addNote(noteCData, noteAData, notebook) {
+    const thenoteFiles = this.initNotes();
+
+    console.log(thenoteFiles.get('Main'))
+    let notes;
+    try {
+      notes = this.getNotes();
+      console.log(notes)
+    } catch {
+      return;
+    }
+    let noteFormat = {
+      [noteAData.id]: {
+        id: noteAData.id,
+        channel_id: noteAData.channel_id,
+        guild_id: noteCData.guild_id,
+        content: noteAData.content,
+        author: {
+          id: noteAData.author.id,
+          avatar: noteAData.author.avatar,
+          discriminator: noteAData.author.discriminator,
+          username: noteAData.author.username,
+        },
+        timestamp: noteAData.timestamp,
+        attachments: noteAData.attachments,
+        embeds: noteAData.embeds,
+        reactions: noteAData.reactions,
+      },
+    };
+
+    Object.assign(notes, noteFormat);
+    // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
+  }
+
+  public deleteNote = (note, notebook) => {
     this.initNotes();
     let notes;
     try {
@@ -24,50 +62,21 @@ export default new (class noteHandler {
       return;
     }
 
-    let noteFormat = {
-      [noteData.message.id]: {
-        id: noteData.message.id,
-        channel_id: noteData.channel.id,
-        guild_id: noteData.channel.guild_id,
-        content: noteData.message.content,
-        author: {
-          id: noteData.message.author.id,
-          avatar: noteData.message.author.avatar,
-          discriminator: noteData.message.author.discriminator,
-          username: noteData.message.author.username,
-        },
-        timestamp: noteData.message.timestamp,
-        attachments: noteData.message.attachments,
-        embeds: noteData.message.embeds,
-        reactions: noteData.message.reactions,
-      },
-    };
+    delete notes[notebook][note];
 
-    Object.assign(notes[notebook], noteFormat);
     // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
-  }
+  };
 
-  public deleteNote = (note, notebook) => {
+  public moveNote = (note, toNotebook, fromNotebook) => {
     this.initNotes()
     let notes
     try { notes = this.getNotes() }
     catch { return }
 
-    delete notes[notebook][note]
-
+    delete notes[fromNotebook][note.id]
+    Object.assign(notes[toNotebook], { [note.id]: note })
     // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
   }
-
-  // public moveNote = (note, toNotebook, fromNotebook) => {
-  //   this.initNotes()
-  //   let notes
-  //   try { notes = this.getNotes() }
-  //   catch { return }
-
-  //   delete notes[fromNotebook][note.id]
-  //   Object.assign(notes[toNotebook], { [note.id]: note })
-  //   fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
-  // }
 
   // public newNotebook = (name) => {
   //   this.initNotes()

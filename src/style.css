@@ -1,0 +1,59 @@
+.notebook-search {
+  flex: auto;
+  margin-right: 15px;
+  margin-bottom: 6px;
+  background-color: var(--background-primary);
+}
+.notebook-header {
+  margin-bottom: 10px;
+  padding: 16px 16px 10px 16px;
+}
+.notebook-header-main {
+  padding-top: 15px;
+  padding-left: 10px;
+  padding-bottom: 0px;
+  background-color: var(--background-tertiary);
+  box-shadow: 0 1px 0 0 var(--background-tertiary), 0 1px 2px 0 var(--background-tertiary) !important;
+}
+.notebook-heading {
+  max-width: 95px;
+  margin-right: 0px;
+  padding-bottom: 6px;
+  transform: scale(0.85);
+}
+.notebook-tabbar {
+  margin: 0;
+  padding: 10px 20px 0;
+  background-color: var(--background-tertiary);
+}
+.notebook-tabbar-item {
+  font-size: 14px;
+}
+.notebook-display-left {
+  flex: auto;
+  display: flex;
+}
+.notebook-flex {
+  overflow: hidden;
+}
+.notebook-flex .help-icon {
+  width: 17px;
+  opacity: 0.5;
+  cursor: pointer;
+  padding-left: 0px;
+  margin: 0px 14px 6px 0px;
+  color: var(--interactive-normal);
+  transition: opacity 0.2s ease-in-out;
+}
+.notebook-flex .help-icon:hover {
+  opacity: 1;
+}
+.help-markdown {
+  margin-top: 6px;
+}
+.help-markdown hr {
+  border: 0;
+  height: 2px;
+  margin: 12px 0px 16px 0px;
+  background-color: var(--background-modifier-accent);
+}

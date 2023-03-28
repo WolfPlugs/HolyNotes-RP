@@ -1,10 +1,11 @@
+
 import { Injector, Logger, common, components, settings, webpack } from "replugged";
 
-import Note from "./icons/Note";
 import NoteButton from "./icons/NoteButton";
 import { NoteModal } from "./modals/notebook";
 
-// import "./style.scss";
+import "./style.css"; 
+import noteHandler from "./noteHandler";
 
 const { openModal } = common.modal;
 const { Tooltip } = components;
@@ -12,7 +13,6 @@ const { Tooltip } = components;
 const inject = new Injector();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logger = Logger.plugin("HolyNotes");
-import { pluginSettings } from "./noteHandler/settings";
 
 export async function start(): Promise<void> {
   const mod = await webpack.waitForModule(
@@ -54,9 +54,10 @@ export function stop(): void {
 function injectNotesPops() {
   inject.utils.addPopoverButton(() => {
     return {
-      label: "Add Notes",
+      label: "Add Message to notes",
       icon: NoteButton,
-      onClick: () => {
+      onClick: (e, a) => {
+        noteHandler.addNote(e, a, "Main")
         openModal(() => <></>);
       },
     };
