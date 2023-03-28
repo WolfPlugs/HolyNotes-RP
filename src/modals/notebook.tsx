@@ -8,8 +8,8 @@ const { tabBarContainer } = webpack.getByProps("tabBarContainer");
 import HelpModal from "../modals/helpModal";
 import HelpIcon from "../icons/helpIcon";
 import noteHandlers from "../noteHandler/index";
-import noResultsMessage from "./noResultsMessage";
-import renderMessage from "./renderMessage";
+import NoResultsMessage from "./noResultsMessage";
+import RenderMessage from "./renderMessage";
 
 const NoteBookRender = ({
   notes,
@@ -20,12 +20,12 @@ const NoteBookRender = ({
   searchInput,
 }) => {
   if (Object.keys(notes).length === 0) {
-    return <noResultsMessage error={false} />;
+    return <NoResultsMessage error={false} />;
   } else {
     let messageArray;
     sortType ?
       messageArray = Object.keys(notes).map(note =>
-        <renderMessage
+        <RenderMessage
           note={notes[note]}
           notebook={notebook}
           updateParent={updateParent}
@@ -34,7 +34,7 @@ const NoteBookRender = ({
         />
       ) :
       messageArray = Object.keys(notes).map(note =>
-        <renderMessage
+        <RenderMessage
           note={notes[note]}
           notebook={notebook}
           updateParent={updateParent}

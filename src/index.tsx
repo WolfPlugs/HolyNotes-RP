@@ -1,5 +1,5 @@
 
-import { Injector, Logger, common, components, settings, webpack } from "replugged";
+import { Injector, Logger, common, components, webpack } from "replugged";
 
 import NoteButton from "./icons/NoteButton";
 import { NoteModal } from "./modals/notebook";
@@ -29,7 +29,6 @@ export async function start(): Promise<void> {
     const { toolbar } = args[0];
     // eslint-disable-next-line no-undefined
     if (toolbar.length === undefined) return res;
-
     toolbar.push(
       <Tooltip text={"Holy Notes"} position={"bottom"}>
         <div className={`note-button ${iconClasses.iconWrapper} ${iconClasses.clickable}`}>
@@ -58,7 +57,6 @@ function injectNotesPops() {
       icon: NoteButton,
       onClick: (e, a) => {
         noteHandler.addNote(e, a, "Main")
-        openModal(() => <></>);
       },
     };
   });

@@ -2,13 +2,10 @@ import { common, webpack, components } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 
-const { contextMenu: { open } } = common;
-const { FormItem } = components;
 const classes = webpack.getByProps("cozyMessage");
 const ChannelMessage = webpack.getBySource('flashKey')
 
 
-const User = webpack.getModule((m) => ["tag"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).o
 
 const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
 const RoutingUtils = {
@@ -19,38 +16,42 @@ const RoutingUtils = {
 }
 
 
-const Timestamp = await webpack.waitForModule<any>((m) =>
-  Boolean(getExportsForProto(m.exports, ["month", "toDate"])),
-);
+const Timestamp = webpack.getBySource("parseTwoDigitYear");
 
 const Message = await webpack.waitForModule<any>((m) =>
   Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
 );
 
-const Channel = await webpack.waitForModule<any>((m) =>
-  Boolean(getExportsForProto(m.exports, ["getGuildId"])),
+const User = webpack.getModule((m) =>
+  Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
+)
+
+
+const Channel = getExportsForProto(
+  await webpack.waitForModule<any>((m) => Boolean(getExportsForProto(m.exports, ["getGuildId"]))),
+  ["getGuildId"],
 );
 
 // replugged.webpack.getModule((m) => ["getGuildId"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).Sf
 
 
-const { React, contextMenu, } = common;
-const { ErrorBoundary } = components;
+const { React, contextMenu: { open, close } } = common;
+const { ErrorBoundary, FormItem } = components;
 
 let isHoldingDelete;
-React.useEffect(() => {
+// React.useEffect(() => {
 
-  const deleteHandler = (e) => e.key === 'Delete' && (isHoldingDelete = e.key === 'keydown')
+//   const deleteHandler = (e) => e.key === 'Delete' && (isHoldingDelete = e.key === 'keydown')
 
 
-  document.addEventListener('keydown', deleteHandler)
-  document.addEventListener('keyup', deleteHandler)
+//   document.addEventListener('keydown', deleteHandler)
+//   document.addEventListener('keyup', deleteHandler)
 
-  return () => {
-    document.removeEventListener('keydown', deleteHandler)
-    document.removeEventListener('keyup', deleteHandler)
-  }
-}, [])
+//   return () => {
+//     document.removeEventListener('keydown', deleteHandler)
+//     document.removeEventListener('keyup', deleteHandler)
+//   }
+// }, [])
 
 export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) => {
   console.log(note)
@@ -98,7 +99,7 @@ export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) 
 
 const NoteContextMenu = ({ note, notebook, updateParent, closeModal }) => {
   return <>
-    <contextMenu onClose={contextMenu.close}>
+    <contextMenu onClose={close}>
       <FormItem
         label='Jump to message' id='jump'
         action={() => {
