@@ -13,7 +13,7 @@ const { Tooltip } = components;
 const inject = new Injector();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logger = Logger.plugin("HolyNotes");
-
+export let WhatintheActualFUckAmIDOING
 export async function start(): Promise<void> {
   const mod = await webpack.waitForModule(
     webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
@@ -22,8 +22,15 @@ export async function start(): Promise<void> {
   const fnPropName = Object.entries(mod).find(([_, v]) => typeof v === "function")?.[0];
 
   const iconClasses = webpack.getByProps("iconWrapper", "clickable");
+  const ChannelMessage = webpack.getBySource(/\.compact.*\.zalgo.*\.childrenMessageContent/, { raw: true });
 
   injectNotesPops();
+
+  inject.after(ChannelMessage.exports, "Z", (args, res) => {
+
+    WhatintheActualFUckAmIDOING = res
+  })
+
   // @ts-ignore
   inject.after(mod, fnPropName, (args: any, res: any) => {
     const { toolbar } = args[0];

@@ -1,9 +1,9 @@
-import { common, webpack, components } from "replugged";
+import { common, webpack, components, Injector } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
-
+import { WhatintheActualFUckAmIDOING } from "../index";
 const classes = webpack.getByProps("cozyMessage");
-const ChannelMessage = webpack.getBySource('flashKey')
+const ChannelMessage = WhatintheActualFUckAmIDOING
 
 
 
@@ -39,6 +39,9 @@ const { React, contextMenu: { open, close } } = common;
 const { ErrorBoundary, FormItem } = components;
 
 let isHoldingDelete;
+
+const inject = new Injector();
+
 // React.useEffect(() => {
 
 //   const deleteHandler = (e) => e.key === 'Delete' && (isHoldingDelete = e.key === 'keydown')
@@ -54,7 +57,7 @@ let isHoldingDelete;
 // }, [])
 
 export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) => {
-  console.log(note)
+  console.log(WhatintheActualFUckAmIDOING)
   return (
     <ErrorBoundary className='holy-note'>
       <ChannelMessage
