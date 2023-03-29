@@ -2,7 +2,7 @@ import { common } from "replugged";
 
 const { React } = common;
 
-module.exports = React.memo(() => (
+export default React.memo(() => (
   <svg
     x="0"
     y="0"

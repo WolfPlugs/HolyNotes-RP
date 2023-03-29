@@ -1,7 +1,7 @@
 import { common } from "replugged";
 const { React } = common;
 
-module.exports = React.memo((props) => (
+export default React.memo((props) => (
   <svg viewBox="6 3.7 16 16" width={24} height={24} {...props}>
     <path
       fill="currentColor"

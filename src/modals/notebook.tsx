@@ -3,7 +3,7 @@ import { common, components, webpack } from "replugged";
 const { Modal, Flex, Divider, ErrorBoundary, TextInput, Text } = components;
 const {
   React,
-  modal: { openModal, closeModal },
+  modal: { openModal },
 } = common;
 
 const { tabBarContainer, tabBar, tabBarItem } = webpack.getByProps("tabBarContainer");
@@ -26,6 +26,7 @@ const NoteBookRender = ({
   sortDirection,
   sortType,
   searchInput,
+  closeModal,
 }) => {
   if (Object.keys(notes).length === 0) {
     return <NoResultsMessage error={false} />;
@@ -117,6 +118,7 @@ export const NoteModal = (props) => {
             sortDirection={sortDirection}
             sortType={sortType}
             searchInput={searchInput}
+            closeModal={props.onClose}
           />
         </ErrorBoundary>
       </Modal.ModalContent>
