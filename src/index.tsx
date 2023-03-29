@@ -27,8 +27,6 @@ export async function start(): Promise<void> {
 
   injectNotesPops();
 
-
-
   // @ts-ignore
   inject.after(mod, fnPropName, (args: any, res: any) => {
     const { toolbar } = args[0];

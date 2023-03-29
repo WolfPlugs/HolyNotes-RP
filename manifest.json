@@ -2,11 +2,18 @@
   "id": "dev.wolfplugs.HolyNotes",
   "name": "HolyNotes",
   "description": "Holy Notes allows you to save messages",
-  "author": {
+  "//Big thanks to Tharki-God for helping me with this plugin!": "",
+  "author": [{
     "name": "Wolfie",
     "discordID": "347096063569559553",
     "github": "WolfPlugs"
   },
+  {
+    "name": "Tharki-God",
+    "discordID": "1025214794766221384",
+    "github": "Tharki-God"
+  }
+],
   "version": "1.0.0",
   "updater": {
     "type": "github",

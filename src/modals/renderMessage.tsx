@@ -2,6 +2,7 @@ import { common, webpack, components, Injector } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 import { WhatintheActualFUckAmIDOING } from "../index";
+
 const classes = webpack.getByProps("cozyMessage");
 const { ChannelMessage } = webpack.getBySource("flashKey");
 
@@ -32,7 +33,7 @@ const {
   React,
   contextMenu: { open, close },
 } = common;
-const { ErrorBoundary, FormItem } = components;
+const { ErrorBoundary, FormItem, Divider } = components;
 
 let isHoldingDelete;
 
@@ -52,52 +53,62 @@ const inject = new Injector();
 // }, [])
 
 export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) => {
-
   return (
-    <ErrorBoundary className="holy-note">
-      <ChannelMessage
-        message={
-          new Message(
-            Object.assign(
-              { ...note },
-              {
-                author: new User({ ...note.author }),
-                timestamp: new Timestamp(new Date(note.timestamp)),
-                embeds: note.embeds.map((embed) =>
-                  embed.timestamp
-                    ? Object.assign(embed, {
+      <div className="holy-note">
+        <ChannelMessage
+          style={{
+            marginBottom: '5px',
+            marginTop: '5px',
+            paddingTop: '5px',
+            paddingBottom: '5px'
+          }}
+          className={[
+            classes.message,
+            classes.cozyMessage,
+            classes.groupStart
+          ].join(' ')}
+          message={
+            new Message(
+              Object.assign(
+                { ...note },
+                {
+                  author: new User({ ...note.author }),
+                  timestamp: new Timestamp(new Date(note.timestamp)),
+                  embeds: note.embeds.map((embed) =>
+                    embed.timestamp
+                      ? Object.assign(embed, {
                         timestamp: new Timestamp(new Date(embed.timestamp)),
                       })
-                    : embed,
-                ),
-              },
-            ),
-          )
-        }
-        channel={new Channel({ id: "holy-notes" })}
-        onLCick={() => {
-          if (isHoldingDelete && !fromDeleteModal) {
-            noteHandler.deleteNote(note.id, notebook);
-            upodateParent();
+                      : embed,
+                  ),
+                },
+              ),
+            )
           }
-        }}
-        onContextMenu={(event) => {
-          if (!fromDeleteModal)
-            return open(event, () => (
-              <NoteContextMenu
-                note={note}
-                notebook={notebook}
-                updateParent={updateParent}
-                closeModal={closeModal}
-              />
-            ));
-        }}
-        compact={false}
-        isHighlight={false}
-        isLastItem={false}
-        renderContentOnly={false}
-      />
-    </ErrorBoundary>
+          channel={new Channel({ id: "holy-notes" })}
+          onClick={() => {
+            if (isHoldingDelete && !fromDeleteModal) {
+              noteHandler.deleteNote(note.id, notebook);
+              upodateParent();
+            }
+          }}
+          onContextMenu={(event) => {
+            if (!fromDeleteModal)
+              return open(event, () => (
+                <NoteContextMenu
+                  note={note}
+                  notebook={notebook}
+                  updateParent={updateParent}
+                  closeModal={closeModal}
+                />
+              ));
+          }}
+          compact={false}
+          isHighlight={false}
+          isLastItem={false}
+          renderContentOnly={false}
+        />
+      </div>
   );
 };
 

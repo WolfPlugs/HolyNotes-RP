@@ -13,14 +13,14 @@ export default new (class noteHandler {
     return noteFiles;
   }
 
-  public getNotes() {
+  public getNotes(getAll = false, notebook = "Main") {
     const thenoteFiles = this.initNotes();
-    return thenoteFiles.get("Main");
+    if(getAll) return thenoteFiles.all();
+    return thenoteFiles.get(notebook);
   }
 
   public addNote(noteCData, noteAData, notebook) {
     const thenoteFiles = this.initNotes();
-
     let notes;
     try {
       notes = this.getNotes();
@@ -46,8 +46,11 @@ export default new (class noteHandler {
       },
     };
 
-    const newNotes = Object.assign(notes, noteFormat);
-    thenoteFiles.set("Main", newNotes);
+    const newNotes = JSON.parse(JSON.stringify(notes));
+    Object.assign(newNotes, noteFormat);
+    const newNotesString = JSON.stringify(newNotes);
+    const clonedNotes = JSON.parse(newNotesString);
+    thenoteFiles.set("Main", clonedNotes);
   }
 
   public deleteNote = (note, notebook) => {
