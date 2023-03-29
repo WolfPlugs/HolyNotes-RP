@@ -4,7 +4,6 @@ import { common } from "replugged";
 
 const { lodash } = common;
 
-
 export default new (class noteHandler {
   public constructor() {
     void this.initNotes();
@@ -16,17 +15,17 @@ export default new (class noteHandler {
 
   public getNotes() {
     const thenoteFiles = this.initNotes();
-    return thenoteFiles.get('Main');
+    return thenoteFiles.get("Main");
   }
 
   public addNote(noteCData, noteAData, notebook) {
     const thenoteFiles = this.initNotes();
 
-    console.log(thenoteFiles.get('Main'))
+    console.log(thenoteFiles.get("Main"));
     let notes;
     try {
       notes = this.getNotes();
-      console.log(notes)
+      console.log(notes);
     } catch {
       return;
     }
@@ -68,15 +67,18 @@ export default new (class noteHandler {
   };
 
   public moveNote = (note, toNotebook, fromNotebook) => {
-    this.initNotes()
-    let notes
-    try { notes = this.getNotes() }
-    catch { return }
+    this.initNotes();
+    let notes;
+    try {
+      notes = this.getNotes();
+    } catch {
+      return;
+    }
 
-    delete notes[fromNotebook][note.id]
-    Object.assign(notes[toNotebook], { [note.id]: note })
+    delete notes[fromNotebook][note.id];
+    Object.assign(notes[toNotebook], { [note.id]: note });
     // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
-  }
+  };
 
   // public newNotebook = (name) => {
   //   this.initNotes()

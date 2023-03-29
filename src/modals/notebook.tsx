@@ -1,7 +1,10 @@
 import { common, components, webpack } from "replugged";
 
 const { Modal, Flex, Divider, ErrorBoundary, TextInput, Text } = components;
-const { React, modal: { openModal, closeModal } } = common;
+const {
+  React,
+  modal: { openModal, closeModal },
+} = common;
 
 const { tabBarContainer } = webpack.getByProps("tabBarContainer");
 
@@ -23,39 +26,44 @@ const NoteBookRender = ({
     return <NoResultsMessage error={false} />;
   } else {
     let messageArray;
-    sortType ?
-      messageArray = Object.keys(notes).map(note =>
-        <RenderMessage
-          note={notes[note]}
-          notebook={notebook}
-          updateParent={updateParent}
-          fromDeleteModal={false}
-          closeModal={closeModal}
-        />
-      ) :
-      messageArray = Object.keys(notes).map(note =>
-        <RenderMessage
-          note={notes[note]}
-          notebook={notebook}
-          updateParent={updateParent}
-          fromDeleteModal={false}
-          closeModal={closeModal}
-        />
-      ).sort((a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp))
+    sortType
+      ? (messageArray = Object.keys(notes).map((note) => (
+          <RenderMessage
+            note={notes[note]}
+            notebook={notebook}
+            updateParent={updateParent}
+            fromDeleteModal={false}
+            closeModal={closeModal}
+          />
+        )))
+      : (messageArray = Object.keys(notes)
+          .map((note) => (
+            <RenderMessage
+              note={notes[note]}
+              notebook={notebook}
+              updateParent={updateParent}
+              fromDeleteModal={false}
+              closeModal={closeModal}
+            />
+          ))
+          .sort((a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp)));
 
-    if (!sortDirection) messageArray.reverse()
+    if (!sortDirection) messageArray.reverse();
 
-    if (searchInput && searchInput !== "") messageArray = messageArray.filter(message => message.props.note.content.toLowerCase().includes(searchInput.toLowerCase()))
+    if (searchInput && searchInput !== "")
+      messageArray = messageArray.filter((message) =>
+        message.props.note.content.toLowerCase().includes(searchInput.toLowerCase()),
+      );
 
     return messageArray;
   }
 };
 
 export const NoteModal = (props) => {
-	const [sortType, setSortType] = React.useState(true)
-	const [searchInput, setSearch] = React.useState('')
-	const [sortDirection, setSortDirection] = React.useState(true)
-	const [currentNotebook, setCurrentNotebook] = React.useState('Main')
+  const [sortType, setSortType] = React.useState(true);
+  const [searchInput, setSearch] = React.useState("");
+  const [sortDirection, setSortDirection] = React.useState(true);
+  const [currentNotebook, setCurrentNotebook] = React.useState("Main");
 
   const forceUpdate = React.useReducer(() => ({}), {})[1];
 
@@ -71,7 +79,7 @@ export const NoteModal = (props) => {
         <div onClick={() => openModal(HelpModal)}>
           <HelpIcon className="help-icon" name="HelpCircle" />
         </div>
-        <div style={{ marginBottom: "20px" }} className='notebook-search' >
+        <div style={{ marginBottom: "20px" }} className="notebook-search">
           <TextInput
             autofocus={false}
             placeholder="Search for a message..."
@@ -82,18 +90,14 @@ export const NoteModal = (props) => {
       </Modal.ModalHeader>
       <Modal.ModalContent style={{ marginTop: "20px" }}>
         <ErrorBoundary>
-          <div>gg
-            <Flex fade={true}>
-              <NoteBookRender
-                notes={notes}
-                notebook={currentNotebook}
-                updateParent={() => forceUpdate()}
-                sortDirection={sortDirection}
-                sortType={sortType}
-                searchInput={searchInput}
-              />
-            </Flex>
-          </div>
+          <NoteBookRender
+            notes={notes}
+            notebook={currentNotebook}
+            updateParent={() => forceUpdate()}
+            sortDirection={sortDirection}
+            sortType={sortType}
+            searchInput={searchInput}
+          />
         </ErrorBoundary>
       </Modal.ModalContent>
     </Modal.ModalRoot>
