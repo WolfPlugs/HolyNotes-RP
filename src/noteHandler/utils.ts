@@ -13,6 +13,8 @@ const myModule = await webpack.waitForModule(
   ),
 );
 
+// This is from @12944qwerty's clipboard code 
+// qwerty-mods/copy-raw/blob/master/src/index.ts#L17-L23
 export const MyClipboardUtility: {
   isSupported: boolean;
   copyToClipboard: (content: string) => unknown;
