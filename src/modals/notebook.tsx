@@ -8,7 +8,10 @@ const {
 
 const { tabBarContainer, tabBar, tabBarItem } = webpack.getByProps("tabBarContainer");
 
-const TabBar = webpack.getExportsForProps(webpack.getBySource('[role="tab"][aria-disabled="false"]'), ["Header", "Item", "Panel", "Separator"])
+const TabBar = webpack.getExportsForProps(
+  webpack.getBySource('[role="tab"][aria-disabled="false"]'),
+  ["Header", "Item", "Panel", "Separator"],
+);
 
 import HelpModal from "../modals/helpModal";
 import HelpIcon from "../icons/helpIcon";
@@ -30,16 +33,6 @@ const NoteBookRender = ({
     let messageArray;
     sortType
       ? (messageArray = Object.keys(notes).map((note) => (
-        <RenderMessage
-          note={notes[note]}
-          notebook={notebook}
-          updateParent={updateParent}
-          fromDeleteModal={false}
-          closeModal={closeModal}
-        />
-      )))
-      : (messageArray = Object.keys(notes)
-        .map((note) => (
           <RenderMessage
             note={notes[note]}
             notebook={notebook}
@@ -47,8 +40,18 @@ const NoteBookRender = ({
             fromDeleteModal={false}
             closeModal={closeModal}
           />
-        ))
-        .sort((a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp)));
+        )))
+      : (messageArray = Object.keys(notes)
+          .map((note) => (
+            <RenderMessage
+              note={notes[note]}
+              notebook={notebook}
+              updateParent={updateParent}
+              fromDeleteModal={false}
+              closeModal={closeModal}
+            />
+          ))
+          .sort((a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp)));
 
     if (!sortDirection) messageArray.reverse();
 
@@ -73,7 +76,7 @@ export const NoteModal = (props) => {
   return (
     <Modal.ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
       <Modal.ModalHeader className="notebook-header-main">
-        <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className='notebook-heading'>
+        <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className="notebook-heading">
           NOTEBOOK
         </Text>
         <div onClick={() => openModal(HelpModal)}>
@@ -95,12 +98,14 @@ export const NoteModal = (props) => {
           className={`${tabBar} notebook-tabbar`}
           selectedItem={currentNotebook}
           onItemSelect={setCurrentNotebook}>
-          {Object.keys(noteHandlers.getNotes(true)).map(notebook =>
-            <TabBar.Item id={notebook} className={`${tabBarItem} notebook-tabbar-item`} key={notebook} >
+          {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
+            <TabBar.Item
+              id={notebook}
+              className={`${tabBarItem} notebook-tabbar-item`}
+              key={notebook}>
               {notebook}
             </TabBar.Item>
-          )}
-
+          ))}
         </TabBar>
       </div>
       <Modal.ModalContent style={{ marginTop: "20px" }}>

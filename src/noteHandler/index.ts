@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { noteFiles } from "./utils";
-import { common } from "replugged";
-
-const { lodash } = common;
 
 export default new (class noteHandler {
   public constructor() {
@@ -15,7 +14,7 @@ export default new (class noteHandler {
 
   public getNotes(getAll = false, notebook = "Main") {
     const thenoteFiles = this.initNotes();
-    if(getAll) return thenoteFiles.all();
+    if (getAll) return thenoteFiles.all();
     return thenoteFiles.get(notebook);
   }
 
@@ -23,7 +22,7 @@ export default new (class noteHandler {
     const thenoteFiles = this.initNotes();
     let notes;
     try {
-      notes = this.getNotes();
+      notes = this.getNotes(false, notebook);
     } catch {
       return;
     }
@@ -50,7 +49,7 @@ export default new (class noteHandler {
     Object.assign(newNotes, noteFormat);
     const newNotesString = JSON.stringify(newNotes);
     const clonedNotes = JSON.parse(newNotesString);
-    thenoteFiles.set("Main", clonedNotes);
+    thenoteFiles.set(notebook, clonedNotes);
   }
 
   public deleteNote = (note, notebook) => {

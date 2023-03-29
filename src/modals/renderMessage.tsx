@@ -1,4 +1,4 @@
-import { common, webpack, components, Injector } from "replugged";
+import { common, webpack, components } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 import { WhatintheActualFUckAmIDOING } from "../index";
@@ -33,12 +33,9 @@ const {
   React,
   contextMenu: { open, close },
 } = common;
-const { ErrorBoundary, FormItem, Divider } = components;
+const { FormItem, Divider } = components;
 
 let isHoldingDelete;
-
-const inject = new Injector();
-
 // React.useEffect(() => {
 
 //   const deleteHandler = (e) => e.key === 'Delete' && (isHoldingDelete = e.key === 'keydown')
@@ -54,61 +51,57 @@ const inject = new Injector();
 
 export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) => {
   return (
-      <div className="holy-note">
-        <ChannelMessage
-          style={{
-            marginBottom: '5px',
-            marginTop: '5px',
-            paddingTop: '5px',
-            paddingBottom: '5px'
-          }}
-          className={[
-            classes.message,
-            classes.cozyMessage,
-            classes.groupStart
-          ].join(' ')}
-          message={
-            new Message(
-              Object.assign(
-                { ...note },
-                {
-                  author: new User({ ...note.author }),
-                  timestamp: new Timestamp(new Date(note.timestamp)),
-                  embeds: note.embeds.map((embed) =>
-                    embed.timestamp
-                      ? Object.assign(embed, {
+    <div className="holy-note">
+      <ChannelMessage
+        style={{
+          marginBottom: "5px",
+          marginTop: "5px",
+          paddingTop: "5px",
+          paddingBottom: "5px",
+        }}
+        className={[classes.message, classes.cozyMessage, classes.groupStart].join(" ")}
+        message={
+          new Message(
+            Object.assign(
+              { ...note },
+              {
+                author: new User({ ...note.author }),
+                timestamp: new Timestamp(new Date(note.timestamp)),
+                embeds: note.embeds.map((embed) =>
+                  embed.timestamp
+                    ? Object.assign(embed, {
                         timestamp: new Timestamp(new Date(embed.timestamp)),
                       })
-                      : embed,
-                  ),
-                },
-              ),
-            )
+                    : embed,
+                ),
+              },
+            ),
+          )
+        }
+        channel={new Channel({ id: "holy-notes" })}
+        onClick={() => {
+          if (isHoldingDelete && !fromDeleteModal) {
+            noteHandler.deleteNote(note.id, notebook);
+            upodateParent();
           }
-          channel={new Channel({ id: "holy-notes" })}
-          onClick={() => {
-            if (isHoldingDelete && !fromDeleteModal) {
-              noteHandler.deleteNote(note.id, notebook);
-              upodateParent();
-            }
-          }}
-          onContextMenu={(event) => {
-            if (!fromDeleteModal)
-              return open(event, () => (
-                <NoteContextMenu
-                  note={note}
-                  notebook={notebook}
-                  updateParent={updateParent}
-                  closeModal={closeModal}
-                />
-              ));
-          }}
-          compact={false}
-          isHighlight={false}
-          isLastItem={false}
-          renderContentOnly={false}
-        />
-      </div>
+        }}
+        onContextMenu={(event) => {
+          if (!fromDeleteModal)
+            return open(event, () => (
+              <NoteContextMenu
+                note={note}
+                notebook={notebook}
+                updateParent={updateParent}
+                closeModal={closeModal}
+              />
+            ));
+        }}
+        compact={false}
+        isHighlight={false}
+        isLastItem={false}
+        renderContentOnly={false}
+      />
+    </div>
   );
 };
 

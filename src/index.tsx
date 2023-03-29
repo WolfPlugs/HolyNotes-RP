@@ -1,10 +1,9 @@
-
 import { Injector, Logger, common, components, webpack } from "replugged";
 
 import NoteButton from "./icons/NoteButton";
 import { NoteModal } from "./modals/notebook";
 
-import "./style.css"; 
+import "./style.css";
 import noteHandler from "./noteHandler";
 
 const { openModal } = common.modal;
@@ -16,7 +15,6 @@ const inject = new Injector();
 const logger = Logger.plugin("HolyNotes");
 
 export async function start(): Promise<void> {
-  
   const mod = await webpack.waitForModule(
     webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
   );
@@ -42,7 +40,7 @@ export async function start(): Promise<void> {
             }}
           />
         </div>
-      </Tooltip>, 
+      </Tooltip>,
     );
 
     return res;
@@ -59,7 +57,7 @@ function injectNotesPops() {
       label: "Add Message to notes",
       icon: NoteButton,
       onClick: (e, a) => {
-        noteHandler.addNote(e, a, "Main")
+        noteHandler.addNote(e, a, "Main");
       },
     };
   });
