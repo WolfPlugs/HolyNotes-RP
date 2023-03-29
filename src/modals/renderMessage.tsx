@@ -52,7 +52,7 @@ const inject = new Injector();
 // }, [])
 
 export default ({ note, notebook, upodateParent, fromDeleteModal, closeModal }) => {
-  console.log(ChannelMessage);
+
   return (
     <ErrorBoundary className="holy-note">
       <ChannelMessage

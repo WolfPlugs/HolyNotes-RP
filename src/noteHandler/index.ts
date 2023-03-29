@@ -21,11 +21,9 @@ export default new (class noteHandler {
   public addNote(noteCData, noteAData, notebook) {
     const thenoteFiles = this.initNotes();
 
-    console.log(thenoteFiles.get("Main"));
     let notes;
     try {
       notes = this.getNotes();
-      console.log(notes);
     } catch {
       return;
     }
@@ -48,8 +46,8 @@ export default new (class noteHandler {
       },
     };
 
-    Object.assign(notes, noteFormat);
-    // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
+    const newNotes = Object.assign(notes, noteFormat);
+    thenoteFiles.set("Main", newNotes);
   }
 
   public deleteNote = (note, notebook) => {

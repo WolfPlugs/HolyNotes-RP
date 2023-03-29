@@ -11,6 +11,7 @@ const { openModal } = common.modal;
 const { Tooltip } = components;
 
 const inject = new Injector();
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logger = Logger.plugin("HolyNotes");
 
