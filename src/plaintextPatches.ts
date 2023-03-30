@@ -3,13 +3,16 @@ export default [
     find: "flashKey",
     replacements: [
       {
-        match: /([\w$]+\.[\w$]+\([\w$]+,\{[\w$]+:\(\)=>[\w$]+)(\}\))/,
-        replace: `$1,ChannelMessage: () => channelMessage$2`,
+        match: /(.\..\(.,{[\w$]+:\(\)=>[\w$]+)(}\))/,
+        replace: `$1,ChannelMessage:()=>channelMessage$2`,
       },
       {
         match:
-          /([^]*)(function (\w+)\(\w+\){[^]*?.*message.*channel.*flashKey[^]*?bg-flash-[^]*?})/,
-        replace: `$1$2;const channelMessage=$3;`,
+          /[^]*const channelMessage=[\w]+;|([^]*)(function (\w+)\(.\){[^]*?message.*channel.*flashKey[^]*?bg-flash-[^]*?})/,
+        replace: (entireOrig: string, perfix: string, func: string, funcName: string): string => {
+          if (!perfix || !func || !funcName) return entireOrig;
+          return `${perfix}${func};const channelMessage=${funcName};`;
+        },
       },
     ],
   },

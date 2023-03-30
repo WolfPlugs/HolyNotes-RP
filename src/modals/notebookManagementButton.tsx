@@ -9,7 +9,7 @@ const { modal: { openModal } } = common
 
 export default (props) => {
   const { notebook } = props
-
+  console.log(<CreateNoteBook {...props}/>)
   if (notebook !== 'Main') {
 		return <>
 			<Button

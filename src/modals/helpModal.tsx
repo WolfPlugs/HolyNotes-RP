@@ -1,8 +1,7 @@
-import { common, components } from "replugged";
+import { components } from "replugged";
 
 const { ModalHeader, ModalCloseButton, ModalContent, ModalFooter, ModalRoot } = components.Modal;
-const { closeModal } = common.modal;
-const { FormItem, Slider, Button } = components;
+const { FormItem, Button } = components;
 
 import NotesHandler from "../noteHandler/index";
 

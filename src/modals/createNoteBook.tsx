@@ -9,6 +9,7 @@ const { React: { useState } } = common
 
 export default (props) => {
   const [notebookName, setNotebookName] = useState('')
+  console.log('this runs')
   return (
     <ModalRoot className='create-notebook' size='small'>
       <ModalHeader className='notebook-header'>

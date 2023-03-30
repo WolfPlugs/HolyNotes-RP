@@ -18,7 +18,7 @@ export default new (class noteHandler {
   public getNotes(getAll = false, notebook = "Main") {
     const thenoteFiles = this.initNotes();
     if (getAll) return thenoteFiles.all();
-    return thenoteFiles.get(notebook);
+    return thenoteFiles.get(notebook, {});
   }
 
   public addNote(noteCData, noteAData, notebook) {

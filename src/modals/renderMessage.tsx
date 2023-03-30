@@ -2,7 +2,7 @@ import { common, webpack, components } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 
-const classes = webpack.getByProps("cozyMessage");
+// const classes = webpack.getByProps("cozyMessage");
 const { ChannelMessage } = webpack.getBySource("flashKey");
 
 const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
@@ -29,26 +29,26 @@ const Channel = getExportsForProto(
 // replugged.webpack.getModule((m) => ["getGuildId"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).Sf
 
 const {
-  React,
+  React: { useState, useEffect },
   contextMenu: { open, close },
 } = common;
-const { ContextMenu } = components;
+const {  ContextMenu } = components;
 
-let isHoldingDelete;
-// React.useEffect(() => {
-
-//   const deleteHandler = (e) => e.key === 'Delete' && (isHoldingDelete = e.key === 'keydown')
-
-//   document.addEventListener('keydown', deleteHandler)
-//   document.addEventListener('keyup', deleteHandler)
-
-//   return () => {
-//     document.removeEventListener('keydown', deleteHandler)
-//     document.removeEventListener('keyup', deleteHandler)
-//   }
-// }, [])
+//
 
 export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) => {
+  const [isHoldingDelete, setHoldingDelete] = useState(false);
+  useEffect(() => {
+    const deleteHandler = (e) =>
+      e.key.toLowerCase() === "delete" && setHoldingDelete(e.type.toLowerCase() === "keydown");
+    document.addEventListener("keydown", deleteHandler);
+    document.addEventListener("keyup", deleteHandler);
+
+    return () => {
+      document.removeEventListener("keydown", deleteHandler);
+      document.removeEventListener("keyup", deleteHandler);
+    };
+  }, []);
   return (
     <div
       className="holy-note"
@@ -77,7 +77,13 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
           paddingTop: "5px",
           paddingBottom: "5px",
         }}
-        className={[classes.message, classes.cozyMessage, classes.groupStart].join(" ")}
+        key={note.id}
+        groupId={note.id}
+        compact={false}
+        isHighlight={false}
+        isLastItem={false}
+        renderContentOnly={false}
+        channel={new Channel({ id: "holy-notes" })}
         message={
           new Message(
             Object.assign(
@@ -88,19 +94,14 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
                 embeds: note.embeds.map((embed) =>
                   embed.timestamp
                     ? Object.assign(embed, {
-                      timestamp: new Timestamp(new Date(embed.timestamp)),
-                    })
+                        timestamp: new Timestamp(new Date(embed.timestamp)),
+                      })
                     : embed,
                 ),
               },
             ),
           )
         }
-        channel={new Channel({ id: "holy-notes" })}
-        compact={false}
-        isHighlight={false}
-        isLastItem={false}
-        renderContentOnly={false}
       />
     </div>
   );
@@ -122,13 +123,13 @@ const NoteContextMenu = (props) => {
       />
       <ContextMenu.MenuItem
         label="Copy Text"
-        id="ctext"
+        id="copy-text"
         action={() => MyClipboardUtility.copyToClipboard(note.content)}
       />
       <ContextMenu.MenuItem
         color="danger"
         label="Delete Note"
-        id="delete"
+        id="delete-note"
         action={() => {
           noteHandler.deleteNote(note.id, notebook);
           updateParent();
@@ -137,8 +138,8 @@ const NoteContextMenu = (props) => {
       {Object.keys(noteHandler.getNotes()).length !== 1 ? (
         <ContextMenu.MenuItem
           label="Move Note"
-          id="move"
-          children={Object.keys(noteHandler.getNotes(true)).map((key: string) => {
+          id="move-note"
+          children={Object.keys(noteHandler.getNotes()).map((key: string) => {
             if (key !== notebook) {
               return (
                 <ContextMenu.MenuItem
@@ -146,7 +147,7 @@ const NoteContextMenu = (props) => {
                   id={key}
                   key={key}
                   action={() => {
-                    noteHandler.moveNote(note, notebook, key);
+                    noteHandler.moveNote(note.id, notebook, key);
                     updateParent();
                   }}
                 />
@@ -157,7 +158,7 @@ const NoteContextMenu = (props) => {
       ) : null}
       <ContextMenu.MenuItem
         label="Copy Id"
-        id="cid"
+        id="copy-id"
         action={() => MyClipboardUtility.copyToClipboard(note.id)}
       />
     </ContextMenu.ContextMenu>
