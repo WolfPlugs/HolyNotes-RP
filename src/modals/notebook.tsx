@@ -134,7 +134,7 @@ export const NoteModal = (props) => {
           onClick={props.onClose}
           style={{ paddingLeft: '5px', paddingRight: '10px' }}
         >
-          Clancel
+          Cancel
         </Button>
       </ModalFooter>
     </ModalRoot>
