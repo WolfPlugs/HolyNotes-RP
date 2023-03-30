@@ -135,7 +135,7 @@ const NoteContextMenu = (props) => {
           updateParent();
         }}
       />
-      {Object.keys(noteHandler.getNotes()).length !== 1 ? (
+      {Object.keys(noteHandler.getNotes(true)).length !== 1 ? (
         <ContextMenu.MenuItem
           label="Move Note"
           id="move-note"

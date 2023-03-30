@@ -6,13 +6,15 @@ const { Modal: {
   ModalContent,
   ModalFooter,
   ModalCloseButton,
-}, ErrorBoundary, TextInput, Text, Button } = components;
+}, ErrorBoundary, TextInput, Text, Button, Flex, ContextMenu } = components;
 const {
   React: { useState, useReducer },
   modal: { openModal, closeModal },
+  contextMenu: { open, close },
 } = common;
 
 const { tabBarContainer, tabBar, tabBarItem } = webpack.getByProps("tabBarContainer");
+const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow } = webpack.getByProps("quickSelect");
 
 const TabBar = webpack.getExportsForProps(
   webpack.getBySource('[role="tab"][aria-disabled="false"]'),
@@ -78,64 +80,87 @@ export const NoteModal = (props) => {
   if (!notes) return <></>;
   return (
     <ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
-      <ModalHeader className="notebook-header-main">
-        <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className="notebook-heading">
-          NOTEBOOK
-        </Text>
-        <div onClick={() => openModal(HelpModal)}>
-          <HelpIcon className="help-icon" name="HelpCircle" />
+      <Flex className='notebook-flex' direction={Flex.Direction.VERTICAL} style={{ width: '100%' }}>
+        <ModalHeader className="notebook-header-main">
+          <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className="notebook-heading">
+            NOTEBOOK
+          </Text>
+          <div onClick={() => openModal(HelpModal)}>
+            <HelpIcon className="help-icon" name="HelpCircle" />
+          </div>
+          <div style={{ marginBottom: "20px" }} className="notebook-search">
+            <TextInput
+              autofocus={false}
+              placeholder="Search for a message..."
+              onChange={(e) => setSearch(e)}
+            />
+          </div>
+          <ModalCloseButton onClick={props.onClose} />
+        </ModalHeader>
+        <div className={`${tabBarContainer}`}>
+          <TabBar
+            type="top"
+            look="brand"
+            className={`${tabBar} notebook-tabbar`}
+            selectedItem={currentNotebook}
+            onItemSelect={setCurrentNotebook}>
+            {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
+              <TabBar.Item
+                id={notebook}
+                className={`${tabBarItem} notebook-tabbar-item`}
+                key={notebook}>
+                {notebook}
+              </TabBar.Item>
+            ))}
+          </TabBar>
         </div>
-        <div style={{ marginBottom: "20px" }} className="notebook-search">
-          <TextInput
-            autofocus={false}
-            placeholder="Search for a message..."
-            onChange={(e) => setSearch(e)}
-          />
-        </div>
-        <ModalCloseButton onClick={props.onClose} />
-      </ModalHeader>
-      <div className={`${tabBarContainer}`}>
-        <TabBar
-          type="top"
-          look="brand"
-          className={`${tabBar} notebook-tabbar`}
-          selectedItem={currentNotebook}
-          onItemSelect={setCurrentNotebook}>
-          {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
-            <TabBar.Item
-              id={notebook}
-              className={`${tabBarItem} notebook-tabbar-item`}
-              key={notebook}>
-              {notebook}
-            </TabBar.Item>
-          ))}
-        </TabBar>
-      </div>
-      <ModalContent style={{ marginTop: "20px" }}>
-        <ErrorBoundary>
-          <NoteBookRender
-            notes={notes}
-            notebook={currentNotebook}
-            updateParent={() => forceUpdate()}
-            sortDirection={sortDirection}
-            sortType={sortType}
-            searchInput={searchInput}
-            closeModal={props.onClose}
-          />
-        </ErrorBoundary>
-      </ModalContent>
+        <ModalContent style={{ marginTop: "20px" }}>
+          <ErrorBoundary>
+            <NoteBookRender
+              notes={notes}
+              notebook={currentNotebook}
+              updateParent={() => forceUpdate()}
+              sortDirection={sortDirection}
+              sortType={sortType}
+              searchInput={searchInput}
+              closeModal={props.onClose}
+            />
+          </ErrorBoundary>
+        </ModalContent>
+      </Flex>
       <ModalFooter>
         <NotebookManagementButton
           notebook={currentNotebook}
           setNotebook={setCurrentNotebook} />
-        <Button
-          color={Button.Colors.TRANSPARENT}
-          look={Button.Looks.LINK}
-          onClick={props.onClose}
-          style={{ paddingLeft: '5px', paddingRight: '10px' }}
-        >
-          Cancel
-        </Button>
+        <div className='sort-button-container notebook-display-left'>
+          <Flex align={Flex.Align.CENTER} className={quickSelect} onClick={(event) => {
+            open(event, () => (
+              <ContextMenu.ContextMenu onClose={close}>
+                <ContextMenu.MenuItem
+                  label='Ascending / Date Added' id='ada'
+                  action={() => { setSortDirection(true); setSortType(true); }} />
+                <ContextMenu.MenuItem
+                  label='Ascending / Message Date' id='amd'
+                  action={() => { setSortDirection(true); setSortType(false); }} />
+                <ContextMenu.MenuItem
+                  label='Descending / Date Added' id='dda'
+                  action={() => { setSortDirection(false); setSortType(true); }} />
+                <ContextMenu.MenuItem
+                  label='Descending / Message Date' id='dmd'
+                  action={() => { setSortDirection(false); setSortType(false); }} />
+              </ContextMenu.ContextMenu>
+            ))
+
+          }}>
+            <Text variant='body' className={quickSelectLabel}>Change Sorting:</Text>
+            <Flex grow={0} align={Flex.Align.CENTER} className={quickSelectQuick}>
+              <Text variant='body' className={quickSelectValue}>
+                {sortDirection ? 'Ascending' : 'Descending'} / {sortType ? 'Date Added' : 'Message Date'}
+              </Text>
+              <div className={quickSelectArrow}/>
+            </Flex>
+          </Flex>
+        </div>
       </ModalFooter>
     </ModalRoot>
   );

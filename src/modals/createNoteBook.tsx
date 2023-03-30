@@ -1,48 +1,55 @@
-import { components, common } from 'replugged'
+import { components, common } from "replugged";
 
-import noteHandler from '../noteHandler'
+import noteHandler from "../noteHandler";
 
-const { Button, Modal: { ModalRoot, ModalHeader, ModalContent, ModalCloseButton, ModalFooter }, Text, TextInput } = components
-const { React: { useState } } = common
+const {
+  Button,
+  Modal: { ModalRoot, ModalHeader, ModalContent, ModalCloseButton, ModalFooter },
+  Text,
+  TextInput,
+} = components;
+const {
+  React: { useState },
+} = common;
+
+interface CreateNotebookModalProps {
+  onClose: () => void;
+}
 
 
+export default (props: CreateNotebookModalProps) => {
+  const [notebookName, setNotebookName] = useState("");
 
-export default (props) => {
-  const [notebookName, setNotebookName] = useState('')
-  console.log('this runs')
+  
+  const handleCreateNotebook = () => {
+    if (notebookName !== "") {
+      noteHandler.newNotebook(notebookName);
+    }
+    props.onClose();
+  };
+
   return (
-    <ModalRoot className='create-notebook' size='small'>
-      <ModalHeader className='notebook-header'>
-        <Text tag='h3'>Create Notebook</Text>
+    <ModalRoot className="create-notebook" size="small" {...props}>
+      <ModalHeader className="notebook-header">
+        <Text tag="h3">Create Notebook</Text>
         <ModalCloseButton onClick={props.onClose} />
       </ModalHeader>
       <ModalContent>
-        <Text>Notebook Name</Text>
         <TextInput
           value={notebookName}
           required={false}
-          onChange={value => setNotebookName(value)}
-          style={{ marginBottom: '10px' }}
-        >
-        </TextInput>
+          placeholder="Notebook Name"
+          onChange={(value) => setNotebookName(value)}
+          style={{ marginBottom: "10px" }}
+        />
       </ModalContent>
       <ModalFooter>
         <Button
-          onClick={() => {
-            if (notebookName !== '')
-              noteHandler.newNotebook(notebookName)
-              props.onClose
-          }}
+          onClick={handleCreateNotebook}
           color={Button.Colors.GREEN}>
           Create Notebook
         </Button>
-        <Button
-          onClick={props.onClose}
-          look={Button.Looks.LINK}
-          color={Button.Colors.TRANSPARENT}>
-          Cancel
-        </Button>
       </ModalFooter>
     </ModalRoot>
-  )
-}
+  );
+};

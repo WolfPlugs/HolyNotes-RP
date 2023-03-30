@@ -5,15 +5,15 @@ const { FormItem, Button } = components;
 
 import NotesHandler from "../noteHandler/index";
 
-export default (props) => {
+export default ({ onClose, ...modalProps }) => {
   return (
-    <ModalRoot {...props} className="help-modal" size="medium">
+    <ModalRoot {...modalProps} className="help-modal" size="medium">
       <ModalHeader>
         <FormItem tag="h3">Help Modal</FormItem>
-        <ModalCloseButton onClick={props.onClose} />
+        <ModalCloseButton onClick={onClose} />
       </ModalHeader>
       <ModalContent>
-        <div className="help-markdown">
+        <section className="help-section">
           <h4>Adding Notes</h4>
           <p>
             To add a note right click on a message then hover over the "Note Message" item and click
@@ -31,7 +31,7 @@ export default (props) => {
           <h4>Moving Notes</h4>
           <p>
             To move a note right click on a note and hover over the "Move Note" item and click on
-            the button corrosponding to the notebook you would like to move the note to.
+            the button corresponding to the notebook you would like to move the note to.
           </p>
           <hr />
           <h4>Jump to Message</h4>
@@ -39,12 +39,9 @@ export default (props) => {
             To jump to the location that the note was originally located at just right click on the
             note and hit "Jump to Message".
           </p>
-        </div>
+        </section>
       </ModalContent>
       <ModalFooter>
-        <Button look={Button.Looks.LINK} color={Button.Colors.TRANSPARENT} onClick={props.onClose}>
-          Cancel
-        </Button>
         <div className="notebook-display-left">
           <Button
             look={Button.Looks.GHOST}
@@ -58,4 +55,4 @@ export default (props) => {
       </ModalFooter>
     </ModalRoot>
   );
-};
+}
