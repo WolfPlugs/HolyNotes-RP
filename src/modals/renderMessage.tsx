@@ -139,7 +139,7 @@ const NoteContextMenu = (props) => {
         <ContextMenu.MenuItem
           label="Move Note"
           id="move-note"
-          children={Object.keys(noteHandler.getNotes()).map((key: string) => {
+          children={Object.keys(noteHandler.getNotes(true)).map((key: string) => {
             if (key !== notebook) {
               return (
                 <ContextMenu.MenuItem
@@ -147,7 +147,7 @@ const NoteContextMenu = (props) => {
                   id={key}
                   key={key}
                   action={() => {
-                    noteHandler.moveNote(note.id, notebook, key);
+                    noteHandler.moveNote(note, notebook, key);
                     updateParent();
                   }}
                 />
