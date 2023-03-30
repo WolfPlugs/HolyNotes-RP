@@ -2,6 +2,9 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { noteFiles } from "./utils";
+import { common } from 'replugged'
+
+const { lodash } = common
 
 export default new (class noteHandler {
   public constructor() {
@@ -53,42 +56,46 @@ export default new (class noteHandler {
   }
 
   public deleteNote = (note, notebook) => {
-    this.initNotes();
+    const thenoteFiles = this.initNotes();
     let notes;
     try {
-      notes = this.getNotes();
+      notes = this.getNotes(false, notebook);
     } catch {
       return;
     }
 
-    delete notes[notebook][note];
+    const index = lodash.omit(notes, note);
+    thenoteFiles.set(notebook, index);
 
-    // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
   };
 
-  public moveNote = (note, toNotebook, fromNotebook) => {
-    this.initNotes();
-    let notes;
+  public moveNote = (note, fromNotebook, toNotebook) => {
+    const thenoteFiles = this.initNotes();
+    let fromNotebookNotes;
+    let toNotebookNotes;
     try {
-      notes = this.getNotes();
+      fromNotebookNotes = this.getNotes(false, fromNotebook);
+      toNotebookNotes = this.getNotes(false, toNotebook);
     } catch {
       return;
     }
 
-    delete notes[fromNotebook][note.id];
-    Object.assign(notes[toNotebook], { [note.id]: note });
-    // fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
+    const index = lodash.omit(fromNotebookNotes, note.id);
+    Object.assign(toNotebookNotes, { [note.id]: note });
+    thenoteFiles.set(toNotebook, toNotebookNotes);
+    thenoteFiles.set(fromNotebook, index);
   };
 
-  // public newNotebook = (name) => {
-  //   this.initNotes()
-  //   let notes
-  //   try { notes = this.getNotes() }
-  //   catch { return }
+  public newNotebook = (name) => {
+    const thenoteFiles = this.initNotes();
+    let notes
+    try { notes = this.getNotes(true) }
+    catch { return }
+    console.log(thenoteFiles)
+    Object.assign(notes, { [name]: {} })
 
-  //   Object.assign(notes, { [name]: {} })
-  //   fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
-  // }
+    //fs.writeFileSync(notesPath, JSON.stringify(notes, null, '\t'))
+  }
 
   // public deleteNotebook = (notebook) => {
   //   this.initNotes()

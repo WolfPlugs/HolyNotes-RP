@@ -32,7 +32,7 @@ const {
   React,
   contextMenu: { open, close },
 } = common;
-const { FormItem, Divider, ContextMenu } = components;
+const { ContextMenu } = components;
 
 let isHoldingDelete;
 // React.useEffect(() => {
@@ -88,8 +88,8 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
                 embeds: note.embeds.map((embed) =>
                   embed.timestamp
                     ? Object.assign(embed, {
-                        timestamp: new Timestamp(new Date(embed.timestamp)),
-                      })
+                      timestamp: new Timestamp(new Date(embed.timestamp)),
+                    })
                     : embed,
                 ),
               },
@@ -102,40 +102,6 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
         isLastItem={false}
         renderContentOnly={false}
       />
-      {console.log(
-        <ChannelMessage
-          style={{
-            marginBottom: "5px",
-            marginTop: "5px",
-            paddingTop: "5px",
-            paddingBottom: "5px",
-          }}
-          className={[classes.message, classes.cozyMessage, classes.groupStart].join(" ")}
-          message={
-            new Message(
-              Object.assign(
-                { ...note },
-                {
-                  author: new User({ ...note.author }),
-                  timestamp: new Timestamp(new Date(note.timestamp)),
-                  embeds: note.embeds.map((embed) =>
-                    embed.timestamp
-                      ? Object.assign(embed, {
-                          timestamp: new Timestamp(new Date(embed.timestamp)),
-                        })
-                      : embed,
-                  ),
-                },
-              ),
-            )
-          }
-          channel={new Channel({ id: "holy-notes" })}
-          compact={false}
-          isHighlight={false}
-          isLastItem={false}
-          renderContentOnly={false}
-        />,
-      )}
     </div>
   );
 };
@@ -172,14 +138,15 @@ const NoteContextMenu = (props) => {
         <ContextMenu.MenuItem
           label="Move Note"
           id="move"
-          children={Object.keys(noteHandler.getNotes()).map((key: string) => {
+          children={Object.keys(noteHandler.getNotes(true)).map((key: string) => {
             if (key !== notebook) {
               return (
-                <FormItem
+                <ContextMenu.MenuItem
                   label={`Move to ${key}`}
                   id={key}
+                  key={key}
                   action={() => {
-                    noteHandler.moveNote(note.id, notebook, key);
+                    noteHandler.moveNote(note, notebook, key);
                     updateParent();
                   }}
                 />

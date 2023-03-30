@@ -1,9 +1,15 @@
 import { common, components, webpack } from "replugged";
 
-const { Modal, Flex, Divider, ErrorBoundary, TextInput, Text } = components;
+const { Modal: {
+  ModalRoot,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+  ModalCloseButton,
+}, ErrorBoundary, TextInput, Text, Button } = components;
 const {
-  React,
-  modal: { openModal },
+  React: { useState, useReducer },
+  modal: { openModal, closeModal },
 } = common;
 
 const { tabBarContainer, tabBar, tabBarItem } = webpack.getByProps("tabBarContainer");
@@ -18,6 +24,7 @@ import HelpIcon from "../icons/helpIcon";
 import noteHandlers from "../noteHandler/index";
 import NoResultsMessage from "./noResultsMessage";
 import RenderMessage from "./renderMessage";
+import NotebookManagementButton from "./notebookManagementButton";
 
 const NoteBookRender = ({
   notes,
@@ -28,55 +35,50 @@ const NoteBookRender = ({
   searchInput,
   closeModal,
 }) => {
-  if (Object.keys(notes).length === 0) {
-    return <NoResultsMessage error={false} />;
-  } else {
-    let messageArray;
-    sortType
-      ? (messageArray = Object.keys(notes).map((note) => (
-          <RenderMessage
-            note={notes[note]}
-            notebook={notebook}
-            updateParent={updateParent}
-            fromDeleteModal={false}
-            closeModal={closeModal}
-          />
-        )))
-      : (messageArray = Object.keys(notes)
-          .map((note) => (
-            <RenderMessage
-              note={notes[note]}
-              notebook={notebook}
-              updateParent={updateParent}
-              fromDeleteModal={false}
-              closeModal={closeModal}
-            />
-          ))
-          .sort((a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp)));
+  const messageArray = Object.keys(notes).map((note) => (
+    <RenderMessage
+      note={notes[note]}
+      notebook={notebook}
+      updateParent={updateParent}
+      fromDeleteModal={false}
+      closeModal={closeModal}
+    />
+  ));
 
-    if (!sortDirection) messageArray.reverse();
-
-    if (searchInput && searchInput !== "")
-      messageArray = messageArray.filter((message) =>
-        message.props.note.content.toLowerCase().includes(searchInput.toLowerCase()),
-      );
-
-    return messageArray;
+  if (sortType) {
+    messageArray.sort((a, b) =>
+      new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp)
+    );
   }
+
+  if (sortDirection) {
+    messageArray.reverse();
+  }
+
+  const filteredMessages = messageArray.filter((message) =>
+    message.props.note.content.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  return filteredMessages.length > 0 ? (
+    filteredMessages
+  ) : (
+    <NoResultsMessage error={false} />
+  );
 };
 
 export const NoteModal = (props) => {
-  const [sortType, setSortType] = React.useState(true);
-  const [searchInput, setSearch] = React.useState("");
-  const [sortDirection, setSortDirection] = React.useState(true);
-  const [currentNotebook, setCurrentNotebook] = React.useState("Main");
+  const [sortType, setSortType] = useState(true);
+  const [searchInput, setSearch] = useState("");
+  const [sortDirection, setSortDirection] = useState(true);
+  const [currentNotebook, setCurrentNotebook] = useState("Main");
 
-  const forceUpdate = React.useReducer(() => ({}), {})[1];
+  const forceUpdate = useReducer(() => ({}), {})[1];
   const notes = noteHandlers.getNotes(false, currentNotebook);
+
   if (!notes) return <></>;
   return (
-    <Modal.ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
-      <Modal.ModalHeader className="notebook-header-main">
+    <ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
+      <ModalHeader className="notebook-header-main">
         <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className="notebook-heading">
           NOTEBOOK
         </Text>
@@ -90,8 +92,8 @@ export const NoteModal = (props) => {
             onChange={(e) => setSearch(e)}
           />
         </div>
-        <Modal.ModalCloseButton onClick={props.onClose} />
-      </Modal.ModalHeader>
+        <ModalCloseButton onClick={props.onClose} />
+      </ModalHeader>
       <div className={`${tabBarContainer}`}>
         <TabBar
           type="top"
@@ -109,7 +111,7 @@ export const NoteModal = (props) => {
           ))}
         </TabBar>
       </div>
-      <Modal.ModalContent style={{ marginTop: "20px" }}>
+      <ModalContent style={{ marginTop: "20px" }}>
         <ErrorBoundary>
           <NoteBookRender
             notes={notes}
@@ -121,7 +123,20 @@ export const NoteModal = (props) => {
             closeModal={props.onClose}
           />
         </ErrorBoundary>
-      </Modal.ModalContent>
-    </Modal.ModalRoot>
+      </ModalContent>
+      <ModalFooter>
+        <NotebookManagementButton
+          notebook={currentNotebook}
+          setNotebook={setCurrentNotebook} />
+        <Button
+          color={Button.Colors.TRANSPARENT}
+          look={Button.Looks.LINK}
+          onClick={props.onClose}
+          style={{ paddingLeft: '5px', paddingRight: '10px' }}
+        >
+          Clancel
+        </Button>
+      </ModalFooter>
+    </ModalRoot>
   );
 };

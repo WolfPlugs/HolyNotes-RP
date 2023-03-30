@@ -15,7 +15,7 @@ class Notes extends React.Component {
       <Tooltip color="black" postion="top" text="Note Message">
         {({ onMouseLeave, onMouseEnter }) => (
           <Button
-            className={"note-button"}
+            className="note-button"
             onClick={(e) => {
               NotesHandler;
             }}
