@@ -13,7 +13,7 @@ const RoutingUtils = {
 };
 
 const Timestamp = webpack.getBySource("parseTwoDigitYear");
-const { message, groupStart, cozyMessage } = webpack.getByProps('cozyMessage')
+const { message, groupStart, cozyMessage } = webpack.getByProps("cozyMessage");
 const Message = await webpack.waitForModule<any>((m) =>
   Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
 );
@@ -76,12 +76,7 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
           ));
       }}>
       <ChannelMessage
-        className={[
-          "holy-render",
-          message,
-          groupStart,
-          cozyMessage,
-        ]}
+        className={["holy-render", message, groupStart, cozyMessage]}
         key={note.id}
         groupId={note.id}
         id={note.id}
@@ -100,8 +95,8 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
                 embeds: note.embeds.map((embed) =>
                   embed.timestamp
                     ? Object.assign(embed, {
-                      timestamp: new Timestamp(new Date(embed.timestamp)),
-                    })
+                        timestamp: new Timestamp(new Date(embed.timestamp)),
+                      })
                     : embed,
                 ),
               },

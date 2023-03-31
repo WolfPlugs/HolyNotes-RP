@@ -1,28 +1,30 @@
 import { common, components, webpack } from "replugged";
 
-const { Modal: {
-  ModalRoot,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-  ModalCloseButton,
-}, ErrorBoundary, TextInput, Text, Button, Flex, ContextMenu } = components;
+const {
+  Modal: { ModalRoot, ModalHeader, ModalContent, ModalFooter, ModalCloseButton },
+  ErrorBoundary,
+  TextInput,
+  Text,
+  Button,
+  Flex,
+  ContextMenu,
+} = components;
 const {
   React: { useState, useReducer },
   modal: { openModal, closeModal },
   contextMenu: { open, close },
 } = common;
 
-const { tabBarContainer, tabBar, tabBarItem, topSectionNormal } = webpack.getByProps("tabBarContainer");
+const { tabBarContainer, tabBar, tabBarItem, topSectionNormal } =
+  webpack.getByProps("tabBarContainer");
 const { header } = webpack.getByProps("header");
-const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow  } = webpack.getByProps("quickSelect");
+const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow } =
+  webpack.getByProps("quickSelect");
 
 const TabBar = webpack.getExportsForProps(
   webpack.getBySource('[role="tab"][aria-disabled="false"]'),
   ["Header", "Item", "Panel", "Separator"],
 );
-
-
 
 import HelpModal from "../modals/helpModal";
 import HelpIcon from "../icons/helpIcon";
@@ -30,7 +32,6 @@ import noteHandlers from "../noteHandler/index";
 import NoResultsMessage from "./noResultsMessage";
 import RenderMessage from "./renderMessage";
 import NotebookManagementButton from "./notebookManagementButton";
-
 
 const NoteBookRender = ({
   notes,
@@ -52,8 +53,8 @@ const NoteBookRender = ({
   ));
 
   if (sortType) {
-    messageArray.sort((a, b) =>
-      new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp)
+    messageArray.sort(
+      (a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp),
     );
   }
 
@@ -62,14 +63,10 @@ const NoteBookRender = ({
   }
 
   const filteredMessages = messageArray.filter((message) =>
-    message.props.note.content.toLowerCase().includes(searchInput.toLowerCase())
+    message.props.note.content.toLowerCase().includes(searchInput.toLowerCase()),
   );
 
-  return filteredMessages.length > 0 ? (
-    filteredMessages
-  ) : (
-    <NoResultsMessage error={false} />
-  );
+  return filteredMessages.length > 0 ? filteredMessages : <NoResultsMessage error={false} />;
 };
 
 export const NoteModal = (props) => {
@@ -83,13 +80,19 @@ export const NoteModal = (props) => {
   if (!notes) return <></>;
   return (
     <ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
-      <Flex className='notebook-flex' direction={Flex.Direction.VERTICAL} style={{ width: '100%' }}>
+      <Flex className="notebook-flex" direction={Flex.Direction.VERTICAL} style={{ width: "100%" }}>
         <div className={topSectionNormal}>
           <ModalHeader className={`notebook-header-main`}>
-            <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className={`notebook-heading`}>
+            <Text
+              variant="heading-lg/semibold"
+              style={{ flexGrow: 1 }}
+              className={`notebook-heading`}>
               NOTEBOOK
             </Text>
-            <div className='notebook-flex help-icon' name="HelpCircle" onClick={() => openModal(HelpModal)} >
+            <div
+              className="notebook-flex help-icon"
+              name="HelpCircle"
+              onClick={() => openModal(HelpModal)}>
               <HelpIcon />
             </div>
             <div style={{ marginBottom: "10px" }} className="notebook-search">
@@ -134,33 +137,56 @@ export const NoteModal = (props) => {
         </ModalContent>
       </Flex>
       <ModalFooter>
-        <NotebookManagementButton
-          notebook={currentNotebook}
-          setNotebook={setCurrentNotebook} />
-        <div className='sort-button-container notebook-display-left'>
-          <Flex align={Flex.Align.CENTER} className={quickSelect} onClick={(event) => {
-            open(event, () => (
-              <ContextMenu.ContextMenu onClose={close}>
-                <ContextMenu.MenuItem
-                  label='Ascending / Date Added' id='ada'
-                  action={() => { setSortDirection(true); setSortType(true); }} />
-                <ContextMenu.MenuItem
-                  label='Ascending / Message Date' id='amd'
-                  action={() => { setSortDirection(true); setSortType(false); }} />
-                <ContextMenu.MenuItem
-                  label='Descending / Date Added' id='dda'
-                  action={() => { setSortDirection(false); setSortType(true); }} />
-                <ContextMenu.MenuItem
-                  label='Descending / Message Date' id='dmd'
-                  action={() => { setSortDirection(false); setSortType(false); }} />
-              </ContextMenu.ContextMenu>
-            ))
-
-          }}>
-            <Text variant='body' className={quickSelectLabel}>Change Sorting:</Text>
+        <NotebookManagementButton notebook={currentNotebook} setNotebook={setCurrentNotebook} />
+        <div className="sort-button-container notebook-display-left">
+          <Flex
+            align={Flex.Align.CENTER}
+            className={quickSelect}
+            onClick={(event) => {
+              open(event, () => (
+                <ContextMenu.ContextMenu onClose={close}>
+                  <ContextMenu.MenuItem
+                    label="Ascending / Date Added"
+                    id="ada"
+                    action={() => {
+                      setSortDirection(true);
+                      setSortType(true);
+                    }}
+                  />
+                  <ContextMenu.MenuItem
+                    label="Ascending / Message Date"
+                    id="amd"
+                    action={() => {
+                      setSortDirection(true);
+                      setSortType(false);
+                    }}
+                  />
+                  <ContextMenu.MenuItem
+                    label="Descending / Date Added"
+                    id="dda"
+                    action={() => {
+                      setSortDirection(false);
+                      setSortType(true);
+                    }}
+                  />
+                  <ContextMenu.MenuItem
+                    label="Descending / Message Date"
+                    id="dmd"
+                    action={() => {
+                      setSortDirection(false);
+                      setSortType(false);
+                    }}
+                  />
+                </ContextMenu.ContextMenu>
+              ));
+            }}>
+            <Text variant="body" className={quickSelectLabel}>
+              Change Sorting:
+            </Text>
             <Flex grow={0} align={Flex.Align.CENTER} className={quickSelectQuick}>
-              <Text variant='body' className={quickSelectValue}>
-                {sortDirection ? 'Ascending' : 'Descending'} / {sortType ? 'Date Added' : 'Message Date'}
+              <Text variant="body" className={quickSelectValue}>
+                {sortDirection ? "Ascending" : "Descending"} /{" "}
+                {sortType ? "Date Added" : "Message Date"}
               </Text>
               <div className={quickSelectArrow} />
             </Flex>

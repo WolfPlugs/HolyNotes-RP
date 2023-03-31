@@ -15,8 +15,7 @@ export default (props) => {
       <>
         <Button
           color={Button.Colors.RED}
-          onClick={() => openModal((props) => <DeleteNotebook {...props} notebook={notebook} />)}
-        >
+          onClick={() => openModal((props) => <DeleteNotebook {...props} notebook={notebook} />)}>
           Delete Notebook
         </Button>
       </>

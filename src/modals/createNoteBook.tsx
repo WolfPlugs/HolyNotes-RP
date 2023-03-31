@@ -16,11 +16,9 @@ interface CreateNotebookModalProps {
   onClose: () => void;
 }
 
-
 export default (props: CreateNotebookModalProps) => {
   const [notebookName, setNotebookName] = useState("");
 
-  
   const handleCreateNotebook = () => {
     if (notebookName !== "") {
       noteHandler.newNotebook(notebookName);
@@ -44,9 +42,7 @@ export default (props: CreateNotebookModalProps) => {
         />
       </ModalContent>
       <ModalFooter>
-        <Button
-          onClick={handleCreateNotebook}
-          color={Button.Colors.GREEN}>
+        <Button onClick={handleCreateNotebook} color={Button.Colors.GREEN}>
           Create Notebook
         </Button>
       </ModalFooter>

@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
+ 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { noteFiles } from "./utils";
-import { common, webpack } from 'replugged'
+import { common, webpack } from "replugged";
 import { getExportsForProto } from "../noteHandler/utils";
 
-const { lodash, users: { getUser } } = common
+const {
+  lodash,
+  users: { getUser },
+} = common;
 
 export default new (class noteHandler {
   public constructor() {
@@ -67,7 +70,6 @@ export default new (class noteHandler {
 
     const index = lodash.omit(notes, note);
     thenoteFiles.set(notebook, index);
-
   };
 
   public moveNote = (note, fromNotebook, toNotebook) => {
@@ -90,41 +92,47 @@ export default new (class noteHandler {
   public newNotebook = (name) => {
     const thenoteFiles = this.initNotes();
 
-    if(!thenoteFiles.has(name)) thenoteFiles.set(name, {});
-    return
-  }
+    if (!thenoteFiles.has(name)) thenoteFiles.set(name, {});
+    
+  };
 
   public deleteNotebook = (notebook) => {
     const thenoteFiles = this.initNotes();
 
-    thenoteFiles.delete(notebook)
-  }
+    thenoteFiles.delete(notebook);
+  };
 
   public refreshAvatars = async () => {
     const thenoteFiles = this.initNotes();
-    let notes
-    try { notes = this.getNotes(true) }
-    catch { return }
+    let notes;
+    try {
+      notes = this.getNotes(true);
+    } catch {
+      return;
+    }
 
-    const User = webpack.getModule((m) => Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])));
+    const User = webpack.getModule((m) =>
+      Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
+    );
 
     for (let notebook in notes) {
       for (let noteID in notes[notebook]) {
-        let note = notes[notebook][noteID]
-        let user = getUser(note.author.id)
-          ?? await getUser(note.author.id)
-          ?? new User({ ...note.author })
+        let note = notes[notebook][noteID];
+        let user =
+          getUser(note.author.id) ??
+          (await getUser(note.author.id)) ??
+          new User({ ...note.author });
 
         Object.assign(notes[notebook][noteID].author, {
           avatar: user.avatar,
           discriminator: user.discriminator,
-          username: user.username
-        })
+          username: user.username,
+        });
       }
     }
 
     for (let notebook in notes) {
-      thenoteFiles.set(notebook, notes[notebook])
+      thenoteFiles.set(notebook, notes[notebook]);
     }
-  }
+  };
 })();
