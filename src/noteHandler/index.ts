@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
- 
+
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { noteFiles } from "./utils";
 import { common, webpack } from "replugged";
@@ -93,7 +93,6 @@ export default new (class noteHandler {
     const thenoteFiles = this.initNotes();
 
     if (!thenoteFiles.has(name)) thenoteFiles.set(name, {});
-    
   };
 
   public deleteNotebook = (notebook) => {
