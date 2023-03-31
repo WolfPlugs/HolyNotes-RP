@@ -31,6 +31,8 @@ export async function start(): Promise<void> {
   inject.after(mod, fnPropName, (args: any, res: any) => {
     const { toolbar } = args[0];
     // eslint-disable-next-line no-undefined
+    if (toolbar === undefined) return res;
+    // eslint-disable-next-line no-undefined
     if (toolbar.length === undefined) return res;
     toolbar.push(
       <Tooltip text={"Holy Notes"} position={"bottom"}>
