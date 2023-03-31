@@ -2,7 +2,6 @@ import { common, webpack, components } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 
-// const classes = webpack.getByProps("cozyMessage");
 const { ChannelMessage } = webpack.getBySource("flashKey");
 
 const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
@@ -14,7 +13,7 @@ const RoutingUtils = {
 };
 
 const Timestamp = webpack.getBySource("parseTwoDigitYear");
-
+const { message, groupStart, cozyMessage } = webpack.getByProps('cozyMessage')
 const Message = await webpack.waitForModule<any>((m) =>
   Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
 );
@@ -32,7 +31,7 @@ const {
   React: { useState, useEffect },
   contextMenu: { open, close },
 } = common;
-const {  ContextMenu } = components;
+const { ContextMenu } = components;
 
 //
 
@@ -52,6 +51,12 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
   return (
     <div
       className="holy-note"
+      style={{
+        marginBottom: "8px",
+        marginTop: "8px",
+        paddingTop: "4px",
+        paddingBottom: "4px",
+      }}
       onClick={() => {
         if (isHoldingDelete && !fromDeleteModal) {
           noteHandler.deleteNote(note.id, notebook);
@@ -71,14 +76,15 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
           ));
       }}>
       <ChannelMessage
-        style={{
-          marginBottom: "5px",
-          marginTop: "5px",
-          paddingTop: "5px",
-          paddingBottom: "5px",
-        }}
+        className={[
+          "holy-render",
+          message,
+          groupStart,
+          cozyMessage,
+        ]}
         key={note.id}
         groupId={note.id}
+        id={note.id}
         compact={false}
         isHighlight={false}
         isLastItem={false}
@@ -94,8 +100,8 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
                 embeds: note.embeds.map((embed) =>
                   embed.timestamp
                     ? Object.assign(embed, {
-                        timestamp: new Timestamp(new Date(embed.timestamp)),
-                      })
+                      timestamp: new Timestamp(new Date(embed.timestamp)),
+                    })
                     : embed,
                 ),
               },

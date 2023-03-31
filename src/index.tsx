@@ -5,6 +5,7 @@ import { NoteModal } from "./modals/notebook";
 
 import "./style.css";
 import noteHandler from "./noteHandler";
+import { getExportsForProto } from "./noteHandler/utils";
 
 const { openModal } = common.modal;
 const { Tooltip } = components;
@@ -18,6 +19,7 @@ export async function start(): Promise<void> {
   const mod = await webpack.waitForModule(
     webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
   );
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fnPropName = Object.entries(mod).find(([_, v]) => typeof v === "function")?.[0];
 
@@ -62,3 +64,9 @@ function injectNotesPops() {
     };
   });
 }
+
+// export function noteMenu({ message, target }) {
+//   return console.log(message)
+//   return console.log(target)
+
+// }

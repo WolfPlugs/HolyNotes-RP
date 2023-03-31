@@ -13,13 +13,16 @@ const {
   contextMenu: { open, close },
 } = common;
 
-const { tabBarContainer, tabBar, tabBarItem } = webpack.getByProps("tabBarContainer");
-const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow } = webpack.getByProps("quickSelect");
+const { tabBarContainer, tabBar, tabBarItem, topSectionNormal } = webpack.getByProps("tabBarContainer");
+const { header } = webpack.getByProps("header");
+const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow  } = webpack.getByProps("quickSelect");
 
 const TabBar = webpack.getExportsForProps(
   webpack.getBySource('[role="tab"][aria-disabled="false"]'),
   ["Header", "Item", "Panel", "Separator"],
 );
+
+
 
 import HelpModal from "../modals/helpModal";
 import HelpIcon from "../icons/helpIcon";
@@ -27,6 +30,7 @@ import noteHandlers from "../noteHandler/index";
 import NoResultsMessage from "./noResultsMessage";
 import RenderMessage from "./renderMessage";
 import NotebookManagementButton from "./notebookManagementButton";
+
 
 const NoteBookRender = ({
   notes,
@@ -76,43 +80,44 @@ export const NoteModal = (props) => {
 
   const forceUpdate = useReducer(() => ({}), {})[1];
   const notes = noteHandlers.getNotes(false, currentNotebook);
-
   if (!notes) return <></>;
   return (
     <ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
       <Flex className='notebook-flex' direction={Flex.Direction.VERTICAL} style={{ width: '100%' }}>
-        <ModalHeader className="notebook-header-main">
-          <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className="notebook-heading">
-            NOTEBOOK
-          </Text>
-          <div onClick={() => openModal(HelpModal)}>
-            <HelpIcon className="help-icon" name="HelpCircle" />
+        <div className={topSectionNormal}>
+          <ModalHeader className={`notebook-header-main`}>
+            <Text variant="heading-lg/semibold" style={{ flexGrow: 1 }} className={`notebook-heading`}>
+              NOTEBOOK
+            </Text>
+            <div className='notebook-flex help-icon' name="HelpCircle" onClick={() => openModal(HelpModal)} >
+              <HelpIcon />
+            </div>
+            <div style={{ marginBottom: "10px" }} className="notebook-search">
+              <TextInput
+                autoFocus={false}
+                placeholder="Search for a message..."
+                onChange={(e) => setSearch(e)}
+              />
+            </div>
+            <ModalCloseButton onClick={props.onClose} />
+          </ModalHeader>
+          <div className={`${tabBarContainer}`}>
+            <TabBar
+              type="top"
+              look="brand"
+              className={`${tabBar} notebook-tabbar`}
+              selectedItem={currentNotebook}
+              onItemSelect={setCurrentNotebook}>
+              {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
+                <TabBar.Item
+                  id={notebook}
+                  className={`${tabBarItem} notebook-tabbar-item`}
+                  key={notebook}>
+                  {notebook}
+                </TabBar.Item>
+              ))}
+            </TabBar>
           </div>
-          <div style={{ marginBottom: "20px" }} className="notebook-search">
-            <TextInput
-              autofocus={false}
-              placeholder="Search for a message..."
-              onChange={(e) => setSearch(e)}
-            />
-          </div>
-          <ModalCloseButton onClick={props.onClose} />
-        </ModalHeader>
-        <div className={`${tabBarContainer}`}>
-          <TabBar
-            type="top"
-            look="brand"
-            className={`${tabBar} notebook-tabbar`}
-            selectedItem={currentNotebook}
-            onItemSelect={setCurrentNotebook}>
-            {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
-              <TabBar.Item
-                id={notebook}
-                className={`${tabBarItem} notebook-tabbar-item`}
-                key={notebook}>
-                {notebook}
-              </TabBar.Item>
-            ))}
-          </TabBar>
         </div>
         <ModalContent style={{ marginTop: "20px" }}>
           <ErrorBoundary>
@@ -157,7 +162,7 @@ export const NoteModal = (props) => {
               <Text variant='body' className={quickSelectValue}>
                 {sortDirection ? 'Ascending' : 'Descending'} / {sortType ? 'Date Added' : 'Message Date'}
               </Text>
-              <div className={quickSelectArrow}/>
+              <div className={quickSelectArrow} />
             </Flex>
           </Flex>
         </div>
