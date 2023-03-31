@@ -18,7 +18,7 @@
     "lint:fix": "pnpm run prettier:fix && pnpm run eslint:fix"
   },
   "keywords": [],
-  "author": "",
+  "author": "Wolfkid20044",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.11.2",
