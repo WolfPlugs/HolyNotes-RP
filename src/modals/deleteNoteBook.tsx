@@ -14,7 +14,7 @@ const {
 
 export default ({ onClose, notebook, ...props }) => {
   const notes = noteHandler.getNotes(false, notebook);
-
+  if (!notes) return <></>;
   return (
     <ModalRoot className="delete-notebook" size="LARGE" {...props}>
       <ModalHeader>
@@ -36,7 +36,7 @@ export default ({ onClose, notebook, ...props }) => {
       <ModalFooter>
         <Button
           onClick={() => {
-            noteHandler.deleteNotebook(props.notebook);
+            noteHandler.deleteNotebook(notebook);
             onClose();
           }}
           color={Button.Colors.RED}>

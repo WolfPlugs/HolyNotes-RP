@@ -17,11 +17,12 @@ const RoutingUtils = {
 
 const Timestamp = webpack.getBySource("parseTwoDigitYear");
 const { message, groupStart, cozyMessage } = webpack.getByProps("cozyMessage");
+
+const User = webpack.getModule((m) => Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])));
+
 const Message = await webpack.waitForModule<any>((m) =>
   Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
 );
-
-const User = webpack.getModule((m) => Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])));
 
 const Channel = getExportsForProto(
   await webpack.waitForModule<any>((m) => Boolean(getExportsForProto(m.exports, ["getGuildId"]))),
@@ -138,10 +139,8 @@ export default ({
   );
 };
 
-const NoteContextMenu = (
-  { note, notebook, updateParent, closeModal }: ContextMenuProps,
-  props: object,
-) => {
+const NoteContextMenu = (props: object) => {
+  const { note, notebook, updateParent, closeModal } = props as ContextMenuProps;
   return (
     <ContextMenu.ContextMenu {...props}>
       <ContextMenu.MenuItem
