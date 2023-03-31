@@ -22,6 +22,7 @@ export default new (class noteHandler {
   public getNotes(getAll = false, notebook = "Main") {
     const thenoteFiles = this.initNotes();
     if (getAll) return thenoteFiles.all();
+    // @ts-expect-error notebook thinks string is not good enough
     return thenoteFiles.get(notebook);
   }
 
@@ -120,6 +121,7 @@ export default new (class noteHandler {
         let user =
           getUser(note.author.id) ??
           (await getUser(note.author.id)) ??
+          // @ts-expect-error User uh doesnt have construct but it does
           new User({ ...note.author });
 
         Object.assign(notes[notebook][noteID].author, {
@@ -131,6 +133,7 @@ export default new (class noteHandler {
     }
 
     for (let notebook in notes) {
+      // @ts-expect-error note book being a bad boy wants mommy main but no
       thenoteFiles.set(notebook, notes[notebook]);
     }
   };

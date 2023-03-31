@@ -27,6 +27,7 @@ export default ({ onClose, notebook, ...props }) => {
             <NoResultsMessage error={false} />
           ) : (
             Object.keys(notes).map((note) => (
+              // @ts-ignore
               <RenderMessage note={notes[note]} notebook={notebook} fromDeleteModal={true} />
             ))
           )}

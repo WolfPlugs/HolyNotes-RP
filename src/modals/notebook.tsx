@@ -54,6 +54,7 @@ const NoteBookRender = ({
 
   if (sortType) {
     messageArray.sort(
+      // @ts-ignore
       (a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp),
     );
   }
@@ -105,21 +106,25 @@ export const NoteModal = (props) => {
             <ModalCloseButton onClick={props.onClose} />
           </ModalHeader>
           <div className={`${tabBarContainer}`}>
-            <TabBar
-              type="top"
-              look="brand"
-              className={`${tabBar} notebook-tabbar`}
-              selectedItem={currentNotebook}
-              onItemSelect={setCurrentNotebook}>
-              {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
-                <TabBar.Item
-                  id={notebook}
-                  className={`${tabBarItem} notebook-tabbar-item`}
-                  key={notebook}>
-                  {notebook}
-                </TabBar.Item>
-              ))}
-            </TabBar>
+            {
+              // @ts-ignore
+              <TabBar
+                type="top"
+                look="brand"
+                className={`${tabBar} notebook-tabbar`}
+                selectedItem={currentNotebook}
+                onItemSelect={setCurrentNotebook}>
+                {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
+                  // @ts-ignore
+                  <TabBar.Item
+                    id={notebook}
+                    className={`${tabBarItem} notebook-tabbar-item`}
+                    key={notebook}>
+                    {notebook}
+                  </TabBar.Item>
+                ))}
+              </TabBar>
+            }
           </div>
         </div>
         <ModalContent style={{ marginTop: "20px" }}>
@@ -143,6 +148,7 @@ export const NoteModal = (props) => {
             align={Flex.Align.CENTER}
             className={quickSelect}
             onClick={(event) => {
+              // @ts-ignore
               open(event, () => (
                 <ContextMenu.ContextMenu onClose={close}>
                   <ContextMenu.MenuItem

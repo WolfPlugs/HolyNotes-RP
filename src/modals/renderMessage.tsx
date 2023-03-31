@@ -1,12 +1,15 @@
+/* eslint-disable no-use-before-define */
 import { common, webpack, components } from "replugged";
 import noteHandler from "../noteHandler";
 import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
 
+// @ts-ignore
 const { ChannelMessage } = webpack.getBySource("flashKey");
 
 const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
 const RoutingUtils = {
   transitionToChannel: webpack.getFunctionBySource(
+    // @ts-ignore
     RoutingUtilsModule,
     "transitionTo - Transitioning to ",
   ),
@@ -34,11 +37,32 @@ const {
 const { ContextMenu } = components;
 
 //
+interface RenderMessageProps {
+  note: any;
+  notebook: string;
+  updateParent: () => void;
+  fromDeleteModal: boolean;
+  closeModal: () => void;
+}
 
-export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) => {
+interface ContextMenuProps {
+  note: any;
+  notebook: string;
+  updateParent: () => void;
+  fromDeleteModal: boolean;
+  closeModal: () => void;
+}
+
+export default ({
+  note,
+  notebook,
+  updateParent,
+  fromDeleteModal,
+  closeModal,
+}: RenderMessageProps) => {
   const [isHoldingDelete, setHoldingDelete] = useState(false);
   useEffect(() => {
-    const deleteHandler = (e) =>
+    const deleteHandler = (e: { key: string; type: string }) =>
       e.key.toLowerCase() === "delete" && setHoldingDelete(e.type.toLowerCase() === "keydown");
     document.addEventListener("keydown", deleteHandler);
     document.addEventListener("keyup", deleteHandler);
@@ -63,9 +87,11 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
           updateParent();
         }
       }}
-      onContextMenu={(event) => {
+      onContextMenu={(event: any) => {
         if (!fromDeleteModal)
-          return open(event, (props) => (
+          //@ts-ignore
+          return open(event, (props: any) => (
+            //@ts-ignore
             <NoteContextMenu
               {...Object.assign({}, props, { onClose: close })}
               note={note}
@@ -84,17 +110,21 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
         isHighlight={false}
         isLastItem={false}
         renderContentOnly={false}
+        // @ts-ignore
         channel={new Channel({ id: "holy-notes" })}
         message={
           new Message(
             Object.assign(
               { ...note },
               {
+                // @ts-ignore
                 author: new User({ ...note.author }),
+                // @ts-ignore
                 timestamp: new Timestamp(new Date(note.timestamp)),
-                embeds: note.embeds.map((embed) =>
+                embeds: note.embeds.map((embed: { timestamp: string | number | Date }) =>
                   embed.timestamp
                     ? Object.assign(embed, {
+                        // @ts-ignore
                         timestamp: new Timestamp(new Date(embed.timestamp)),
                       })
                     : embed,
@@ -108,8 +138,10 @@ export default ({ note, notebook, updateParent, fromDeleteModal, closeModal }) =
   );
 };
 
-const NoteContextMenu = (props) => {
-  const { note, notebook, updateParent, closeModal } = props;
+const NoteContextMenu = (
+  { note, notebook, updateParent, closeModal }: ContextMenuProps,
+  props: object,
+) => {
   return (
     <ContextMenu.ContextMenu {...props}>
       <ContextMenu.MenuItem
