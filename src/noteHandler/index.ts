@@ -50,6 +50,7 @@ export default new (class noteHandler {
         attachments: noteAData.attachments,
         embeds: noteAData.embeds,
         reactions: noteAData.reactions,
+        stickerItems: noteAData.stickerItems,
       },
     };
 
