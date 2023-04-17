@@ -46,6 +46,7 @@ export default new (class noteHandler {
           discriminator: noteAData.author.discriminator,
           username: noteAData.author.username,
         },
+        flags: noteAData.flags,
         timestamp: noteAData.timestamp,
         attachments: noteAData.attachments,
         embeds: noteAData.embeds,
