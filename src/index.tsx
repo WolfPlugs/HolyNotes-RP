@@ -66,9 +66,3 @@ function injectNotesPops() {
     };
   });
 }
-
-// export function noteMenu({ message, target }) {
-//   return console.log(message)
-//   return console.log(target)
-
-// }
