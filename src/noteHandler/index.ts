@@ -61,7 +61,7 @@ export default new (class noteHandler {
     const newNotesString = JSON.stringify(newNotes);
     const clonedNotes = JSON.parse(newNotesString);
     thenoteFiles.set(notebook, clonedNotes);
-    toast.toast(`Successfully added note to ${notebook}.`, toast.Kind.SUCCESS, { duration: 5000 })
+    toast.toast(`Successfully added note to ${notebook}.`, toast.Kind.SUCCESS, { duration: 5000 });
   }
 
   public deleteNote = (note, notebook) => {
@@ -75,7 +75,9 @@ export default new (class noteHandler {
 
     const index = lodash.omit(notes, note);
     thenoteFiles.set(notebook, index);
-    toast.toast(`Successfully removed note from ${notebook}.`, toast.Kind.SUCCESS, { duration: 5000 })
+    toast.toast(`Successfully removed note from ${notebook}.`, toast.Kind.SUCCESS, {
+      duration: 5000,
+    });
   };
 
   public moveNote = (note, fromNotebook, toNotebook) => {
@@ -93,26 +95,27 @@ export default new (class noteHandler {
     Object.assign(toNotebookNotes, { [note.id]: note });
     thenoteFiles.set(toNotebook, toNotebookNotes);
     thenoteFiles.set(fromNotebook, index);
-    toast.toast(`Successfully moved note from ${fromNotebook} to ${toNotebook}.`, toast.Kind.SUCCESS, { duration: 5000 })
+    toast.toast(
+      `Successfully moved note from ${fromNotebook} to ${toNotebook}.`,
+      toast.Kind.SUCCESS,
+      { duration: 5000 },
+    );
   };
 
   public newNotebook = (name) => {
     const thenoteFiles = this.initNotes();
 
     if (!thenoteFiles.has(name)) {
-      thenoteFiles.set(name, {})
-      toast.toast(`Successfully created ${name}.`, toast.Kind.SUCCESS, { duration: 5000 })
-
+      thenoteFiles.set(name, {});
+      toast.toast(`Successfully created ${name}.`, toast.Kind.SUCCESS, { duration: 5000 });
     }
-    
   };
 
   public deleteNotebook = (notebook) => {
     const thenoteFiles = this.initNotes();
 
     thenoteFiles.delete(notebook);
-    toast.toast(`Successfully deleted ${notebook}.`, toast.Kind.SUCCESS, { duration: 5000 })
-
+    toast.toast(`Successfully deleted ${notebook}.`, toast.Kind.SUCCESS, { duration: 5000 });
   };
 
   public refreshAvatars = async () => {
@@ -149,7 +152,6 @@ export default new (class noteHandler {
       // @ts-expect-error note book being a bad boy wants mommy main but no
       thenoteFiles.set(notebook, notes[notebook]);
     }
-    toast.toast(`Successfully refreshed the avatars.`, toast.Kind.SUCCESS, { duration: 5000 })
-
+    toast.toast(`Successfully refreshed the avatars.`, toast.Kind.SUCCESS, { duration: 5000 });
   };
 })();

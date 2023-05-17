@@ -25,8 +25,10 @@ const Message = await webpack.waitForModule<any>((m) =>
 );
 
 const Channel = getExportsForProto(
-  await webpack.waitForModule<any>((m) => Boolean(getExportsForProto(m.exports, ["getGuildId"]))),
-  ["getGuildId"],
+  await webpack.waitForModule<any>((m) =>
+    Boolean(getExportsForProto(m.exports, ["getGuildId", "isForumPost"])),
+  ),
+  ["getGuildId", "isForumPost"],
 );
 
 // replugged.webpack.getModule((m) => ["getGuildId"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).Sf
