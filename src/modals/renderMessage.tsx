@@ -159,6 +159,13 @@ const NoteContextMenu = (props: object) => {
         id="copy-text"
         action={() => MyClipboardUtility.copyToClipboard(note.content)}
       />
+      {note?.attachments.length ? (
+        <ContextMenu.MenuItem
+          label="Copy Attachment URL"
+          id="copy-url"
+          action={() => MyClipboardUtility.copyToClipboard(note?.attachments[0].url)}
+        />
+      ) : null}
       <ContextMenu.MenuItem
         color="danger"
         label="Delete Note"
