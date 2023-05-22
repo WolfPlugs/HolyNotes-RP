@@ -88,6 +88,7 @@ export default ({
           updateParent();
         }
       }}
+      // eslint-disable-next-line consistent-return
       onContextMenu={(event: any) => {
         if (!fromDeleteModal)
           //@ts-ignore
