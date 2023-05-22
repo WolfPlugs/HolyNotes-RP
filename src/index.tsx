@@ -1,4 +1,4 @@
-import { Injector, Logger, common, components, webpack } from "replugged";
+import { Injector, Logger, common, components, webpack, types } from "replugged";
 
 import NoteButton from "./icons/NoteButton";
 import { NoteModal } from "./modals/notebook";
@@ -14,8 +14,11 @@ const inject = new Injector();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logger = Logger.plugin("HolyNotes");
-
+export const customExports = {} as {
+  [key: string]: types.ModuleExports | types.AnyFunction;
+};
 export async function start(): Promise<void> {
+  console.log(customExports);
   const mod = await webpack.waitForModule(
     webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
   );
@@ -53,6 +56,10 @@ export async function start(): Promise<void> {
 
 export function stop(): void {
   inject.uninjectAll();
+}
+
+export function addCustomExport(name, expo) {
+  customExports[name] = expo;
 }
 
 function injectNotesPops() {
