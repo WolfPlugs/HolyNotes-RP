@@ -5,7 +5,6 @@ import { NoteModal } from "./modals/notebook";
 
 import "./style.css";
 import noteHandler from "./noteHandler";
-import { getExportsForProto } from "./noteHandler/utils";
 
 const { openModal } = common.modal;
 const { Tooltip } = components;
