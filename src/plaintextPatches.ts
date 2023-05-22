@@ -3,15 +3,19 @@ export default [
     find: "flashKey",
     replacements: [
       {
-        match: /(.\..\(.,{[\w$]+:\(\)=>[\w$]+)(}\))/,
-        replace: `$1,ChannelMessage:()=>channelMessage$2`,
-      },
-      {
-        match:
-          /[^]*const channelMessage=[\w]+;|([^]*)(function (\w+)\(.\){[^]*?message.*channel.*flashKey[^]*?bg-flash-[^]*?})/,
-        replace: (entireOrig: string, perfix: string, func: string, funcName: string): string => {
-          if (!perfix || !func || !funcName) return entireOrig;
-          return `${perfix}${func};const channelMessage=${funcName};`;
+        match: /[^]*function (\w+)\(.\){[^]*?message.*channel.*flashKey[^]*?bg-flash-[^]*?}/,
+        replace: (entireMatch: string, funcName: string): string => {
+          return (
+            `${entireMatch}` +
+            `function HolyNoteExist(){` +
+            `if (replugged.plugins.getExports("dev.wolfplugs.HolyNotes")){` +
+            `replugged.plugins.getExports("dev.wolfplugs.HolyNotes")?.addCustomExport("ChannelMessage", ${funcName});` +
+            `}else{` +
+            `setTimeout(HolyNoteExist, 1000)` +
+            `}` +
+            `};` +
+            `HolyNoteExist();`
+          );
         },
       },
     ],

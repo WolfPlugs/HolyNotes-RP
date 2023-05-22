@@ -1,16 +1,13 @@
 /* eslint-disable no-use-before-define */
-import { common, webpack, components } from "replugged";
+import { common, components, types, webpack } from "replugged";
 import noteHandler from "../noteHandler";
-import { getExportsForProto, MyClipboardUtility } from "../noteHandler/utils";
-
-// @ts-ignore
-const { ChannelMessage } = webpack.getBySource("flashKey");
+import { MyClipboardUtility, getExportsForProto } from "../noteHandler/utils";
+import { customExports } from "../index";
 
 const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
 const RoutingUtils = {
   transitionToChannel: webpack.getFunctionBySource(
-    // @ts-ignore
-    RoutingUtilsModule,
+    RoutingUtilsModule as types.ObjectExports,
     "transitionTo - Transitioning to ",
   ),
 };
@@ -63,6 +60,7 @@ export default ({
   fromDeleteModal,
   closeModal,
 }: RenderMessageProps) => {
+  const { ChannelMessage } = customExports;
   const [isHoldingDelete, setHoldingDelete] = useState(false);
   useEffect(() => {
     const deleteHandler = (e: { key: string; type: string }) =>
