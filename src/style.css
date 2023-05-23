@@ -73,10 +73,10 @@ $modifier: var(--background-modifier-accent);
   background-color: var(--background-modifier-accent);
 }
 
-.holy-note .buttonContainer-1502pf {
+.holy-note [class*="buttonContainer-"] {
   display: none;
 }
 
-.holy-note .messageListItem-ZZ7v6g {
+.holy-note [class*="messageListItem-"] {
   list-style-type: none;
 }
