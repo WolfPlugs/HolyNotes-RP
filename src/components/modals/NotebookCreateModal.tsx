@@ -1,6 +1,5 @@
 import { components, common } from "replugged";
-
-import noteHandler from "../noteHandler";
+import noteHandler from "../../noteHandler";
 
 const {
   Button,
@@ -8,23 +7,16 @@ const {
   Text,
   TextInput,
 } = components;
-const {
-  React: { useState },
-} = common;
 
-interface CreateNotebookModalProps {
-  onClose: () => void;
-}
+const { React } = common;
 
-export default (props: CreateNotebookModalProps) => {
-  const [notebookName, setNotebookName] = useState("");
+export default (props: Replugged.Components.ModalRootProps & { onClose: () => void }) => {
+  const [notebookName, setNotebookName] = React.useState("");
 
-  const handleCreateNotebook = () => {
-    if (notebookName !== "") {
-      noteHandler.newNotebook(notebookName);
-    }
+  const handleCreateNotebook = React.useCallback(() => {
+    if (notebookName !== "") noteHandler.newNotebook(notebookName);
     props.onClose();
-  };
+  }, [notebookName]);
 
   return (
     <ModalRoot className="create-notebook" size="small" {...props}>
@@ -35,7 +27,6 @@ export default (props: CreateNotebookModalProps) => {
       <ModalContent>
         <TextInput
           value={notebookName}
-          required={false}
           placeholder="Notebook Name"
           onChange={(value) => setNotebookName(value)}
           style={{ marginBottom: "10px" }}

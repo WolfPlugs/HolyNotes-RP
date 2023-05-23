@@ -1,73 +1,69 @@
 import { Injector, common, components, types, webpack } from "replugged";
+import type { Channel, Message } from "discord-types/general";
 
-import NoteButton from "./icons/NoteButton";
-import { NoteModal } from "./modals/notebook";
+import NoteButton from "./components/icons/NoteButton";
+import noteHandler from "./noteHandler";
+import { NoteModal } from "./components/modals/Notebook";
 
 import "./style.css";
-import noteHandler from "./noteHandler";
 
 const { openModal } = common.modal;
 const { Tooltip } = components;
 
 const inject = new Injector();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const customExports = {} as {
-  [key: string]: types.ModuleExports | types.AnyFunction;
+export const customExports: Record<string, types.ModuleExports | types.AnyFunction> = {};
+export const addCustomExport = (
+  name: string,
+  expo: types.ModuleExports | types.AnyFunction,
+): void => {
+  customExports[name] = expo;
 };
 
-export async function start(): Promise<void> {
-  const mod = await webpack.waitForModule(
-    webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
-  );
+type ChannelHeaderModule = Record<string, (channelHeader: Discord.ChannelHeader) => JSX.Element>;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const fnPropName = Object.entries(mod).find(([_, v]) => typeof v === "function")?.[0];
-
+export const injectChannelHeader = (mod: ChannelHeaderModule): void => {
+  const componentName = Object.entries(mod).find(([, v]) => typeof v === "function")?.[0];
   const iconClasses = webpack.getByProps("iconWrapper", "clickable");
 
-  injectNotesPops();
+  inject.utils.addPopoverButton((message: Message, channel: Channel) => ({
+    label: "Add Message to Notes",
+    icon: NoteButton,
+    onClick: () => noteHandler.addNote(channel, message, "Main"),
+  }));
 
-  // @ts-ignore
-  inject.after(mod, fnPropName, (args: any, res: any) => {
-    const { toolbar } = args[0];
-    // eslint-disable-next-line no-undefined
-    if (toolbar === undefined) return res;
-    // eslint-disable-next-line no-undefined
-    if (toolbar.length === undefined) return res;
-    toolbar.push(
-      <Tooltip text={"Holy Notes"} position={"bottom"}>
-        <div className={`note-button ${iconClasses.iconWrapper} ${iconClasses.clickable}`}>
-          <NoteButton
-            className={`note-button ${iconClasses.icon}`}
-            onClick={() => {
-              openModal((props) => <NoteModal {...props} />);
-            }}
-          />
-        </div>
-      </Tooltip>,
-    );
+  inject.after(
+    mod,
+    componentName,
+    /* Only using first member so only typing first member */
+    (args: [Discord.ChannelHeader, ...unknown[]], res: JSX.Element) => {
+      /* Catching just in case */
+      if (args?.[0]) {
+        const { toolbar } = args[0];
 
-    return res;
-  });
-}
+        if (toolbar && toolbar?.length)
+          toolbar.push(
+            <Tooltip text={"Holy Notes"} position={"bottom"}>
+              <div className={`note-button ${iconClasses.iconWrapper} ${iconClasses.clickable}`}>
+                <NoteButton
+                  className={`note-button ${iconClasses.icon}`}
+                  onClick={() => openModal((props) => <NoteModal {...props} />)}
+                />
+              </div>
+            </Tooltip>,
+          );
+      }
 
-export function stop(): void {
-  inject.uninjectAll();
-}
+      return res;
+    },
+  );
+};
 
-export function addCustomExport(name, expo) {
-  customExports[name] = expo;
-}
+export const start = async (): Promise<void> =>
+  injectChannelHeader(
+    await webpack.waitForModule<ChannelHeaderModule>(
+      webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
+    ),
+  );
 
-function injectNotesPops() {
-  inject.utils.addPopoverButton(() => {
-    return {
-      label: "Add Message to notes",
-      icon: NoteButton,
-      onClick: (e, a) => {
-        noteHandler.addNote(e, a, "Main");
-      },
-    };
-  });
-}
+export const stop = (): void => inject.uninjectAll();

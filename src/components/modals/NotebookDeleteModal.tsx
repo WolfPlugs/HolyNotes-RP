@@ -1,9 +1,8 @@
 import { components } from "replugged";
 
-import noteHandler from "../noteHandler";
-
-import NoResultsMessage from "../modals/noResultsMessage";
-import RenderMessage from "../modals/renderMessage";
+import noteHandler from "../../noteHandler";
+import Errors from "./Errors";
+import RenderMessage from "./RenderMessage";
 
 const {
   Button,
@@ -12,11 +11,17 @@ const {
   ErrorBoundary,
 } = components;
 
-export default ({ onClose, notebook, ...props }) => {
-  const notes = noteHandler.getNotes(false, notebook);
+export default ({
+  onClose,
+  notebook,
+  ...props
+}: Replugged.Components.ModalRootProps & { onClose: () => void; notebook: string }) => {
+  const notes = noteHandler.getNotes(notebook);
+
   if (!notes) return <></>;
+
   return (
-    <ModalRoot className="delete-notebook" size="LARGE" {...props}>
+    <ModalRoot className="delete-notebook" size="large" {...props}>
       <ModalHeader>
         <Text tag="h3">Confirm Deletion</Text>
         <ModalCloseButton onClick={onClose} />
@@ -24,11 +29,10 @@ export default ({ onClose, notebook, ...props }) => {
       <ModalContent>
         <ErrorBoundary>
           {Object.keys(notes).length === 0 || !notes ? (
-            <NoResultsMessage error={false} />
+            <Errors />
           ) : (
-            Object.keys(notes).map((note) => (
-              // @ts-ignore
-              <RenderMessage note={notes[note]} notebook={notebook} fromDeleteModal={true} />
+            Object.values(notes).map((note) => (
+              <RenderMessage note={note} notebook={notebook} fromDeleteModal={true} />
             ))
           )}
         </ErrorBoundary>
