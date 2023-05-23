@@ -4,30 +4,132 @@
 import { noteFiles } from "./utils";
 import { common, webpack } from "replugged";
 import { getExportsForProto } from "../noteHandler/utils";
-
 const {
   lodash,
   users: { getUser },
   toast,
 } = common;
 
+interface NoteFormat {
+  [key: string]: {
+    id: string;
+    channel_id: string;
+    guild_id: string;
+    content: string;
+    author: {
+      id: string;
+      avatar: string;
+      discriminator: string;
+      username: string;
+    };
+    flags: number;
+    timestamp: string;
+    attachments: DiscordAttachments[];
+    embeds: DiscordEmbeds[];
+    reactions: DiscordReactions[];
+    stickerItems: DiscordStrickerItems[];
+  };
+}
+
+interface DiscordAttachments {
+  content_type: string;
+  filename: string;
+  height: number;
+  id: string;
+  proxy_url: string;
+  size: number;
+  url: string;
+  width: number;
+  spoiler: boolean;
+}
+
+interface DiscordEmbeds {
+  id: string;
+  url?: string;
+  type: string;
+  title?: string;
+  rawTitle?: string;
+  description?: string;
+  rawDescription?: string;
+  color?: number | string;
+  timestamp?: ISO8601;
+  thumbnail?: MediaFormat;
+  image?: MediaFormat;
+  video?: MediaFormat;
+  provider?: {
+    name: string;
+    url: string;
+  };
+  fields?: [
+    {
+      name: string;
+      value: string;
+      inline?: boolean;
+    },
+  ];
+  footer?: {
+    text: string;
+    icon_url?: string;
+    proxy_icon_url?: string;
+  };
+  author?: {
+    name: string;
+    url?: string;
+    icon_url?: string;
+    proxy_icon_url?: string;
+  };
+}
+interface DiscordStrickerItems {
+  id: string;
+  format_type: number;
+  name: string;
+}
+
+interface DiscordReactions {
+  emoji: {
+    id: string;
+    name: string;
+    animated?: boolean;
+  };
+  count: number;
+  count_details: {
+    burst: number;
+    normal: number;
+  };
+  me: boolean;
+  me_burst: boolean;
+  burst_count: number;
+  burst_colors: string[];
+}
+
+interface MediaFormat {
+  url: string;
+  proxy_url?: string;
+  height?: number;
+  width?: number;
+}
+
+interface ISO8601 {
+  milliseconds: () => ISO8601;
+  _isAMomentObject: boolean;
+}
+
 export default new (class noteHandler {
   public constructor() {
-    void this.initNotes();
+    this.initNotes();
   }
 
   public initNotes() {
     return noteFiles;
   }
 
-  public getNotes(getAll = false, notebook = "Main") {
+  public getNotes(getAll = false, notebook = "Main" as string) {
     const thenoteFiles = this.initNotes();
     if (getAll) return thenoteFiles.all();
-    // @ts-expect-error notebook thinks string is not good enough
     return thenoteFiles.get(notebook);
   }
 
-  public addNote(noteCData, noteAData, notebook) {
+  public addNote(noteCData, noteAData, notebook: string) {
     const thenoteFiles = this.initNotes();
     let notes;
     try {
