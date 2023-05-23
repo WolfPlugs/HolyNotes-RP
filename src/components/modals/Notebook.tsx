@@ -1,39 +1,49 @@
 import { common, components, webpack } from "replugged";
 
+import HelpModal from "./HelpModal";
+import HelpIcon from "../icons/HelpIcon";
+import Errors from "./Errors";
+import RenderMessage from "./RenderMessage";
+import ManageNotebookButton from "./ManageNotebookButton";
+import noteHandler from "../../noteHandler";
+
 const {
   Modal: { ModalRoot, ModalHeader, ModalContent, ModalFooter, ModalCloseButton },
   ErrorBoundary,
   TextInput,
   Text,
-  Button,
   Flex,
   ContextMenu,
 } = components;
+
 const {
-  React: { useState, useReducer },
-  modal: { openModal, closeModal },
-  contextMenu: { open, close },
+  React,
+  modal: { openModal },
+  contextMenu,
 } = common;
 
-const { tabBarContainer, tabBar, tabBarItem, topSectionNormal } =
-  webpack.getByProps("tabBarContainer");
-const { header } = webpack.getByProps("header");
+const { tabBarContainer, tabBar, tabBarItem, topSectionNormal } = await webpack.waitForModule<{
+  tabBarContainer: string;
+  tabBar: string;
+  tabBarItem: string;
+  topSectionNormal: string;
+}>(webpack.filters.byProps("tabBarContainer"));
+
 const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow } =
-  webpack.getByProps("quickSelect");
+  await webpack.waitForModule<{
+    quickSelect: string;
+    quickSelectLabel: string;
+    quickSelectQuick: string;
+    quickSelectValue: string;
+    quickSelectArrow: string;
+  }>(webpack.filters.byProps("quickSelect"));
 
 const TabBar = webpack.getExportsForProps(
   webpack.getBySource('[role="tab"][aria-disabled="false"]'),
   ["Header", "Item", "Panel", "Separator"],
 );
 
-import HelpModal from "../modals/helpModal";
-import HelpIcon from "../icons/helpIcon";
-import noteHandlers from "../noteHandler/index";
-import NoResultsMessage from "./noResultsMessage";
-import RenderMessage from "./renderMessage";
-import NotebookManagementButton from "./notebookManagementButton";
-
-const NoteBookRender = ({
+const renderNotebook = ({
   notes,
   notebook,
   updateParent,
@@ -41,10 +51,18 @@ const NoteBookRender = ({
   sortType,
   searchInput,
   closeModal,
-}) => {
-  const messageArray = Object.keys(notes).map((note) => (
+}: Replugged.Components.ModalRootProps & {
+  notes: Record<string, HolyNotes.Note>;
+  notebook: string;
+  updateParent: () => void;
+  sortDirection: boolean;
+  sortType: boolean;
+  searchInput: string;
+  closeModal: () => void;
+}): JSX.Element | JSX.Element[] => {
+  const messageArray = Object.values(notes).map((note) => (
     <RenderMessage
-      note={notes[note]}
+      note={note}
       notebook={notebook}
       updateParent={updateParent}
       fromDeleteModal={false}
@@ -52,33 +70,32 @@ const NoteBookRender = ({
     />
   ));
 
-  if (sortType) {
+  if (sortType)
     messageArray.sort(
-      // @ts-ignore
-      (a, b) => new Date(b.props.note.timestamp) - new Date(a.props.note.timestamp),
+      (a, b) =>
+        new Date(b.props.note.timestamp).getTime() - new Date(a.props.note.timestamp).getTime(),
     );
-  }
 
-  if (sortDirection) {
-    messageArray.reverse();
-  }
+  if (sortDirection) messageArray.reverse();
 
   const filteredMessages = messageArray.filter((message) =>
     message.props.note.content.toLowerCase().includes(searchInput.toLowerCase()),
   );
 
-  return filteredMessages.length > 0 ? filteredMessages : <NoResultsMessage error={false} />;
+  return filteredMessages.length > 0 ? filteredMessages : <Errors />;
 };
 
-export const NoteModal = (props) => {
-  const [sortType, setSortType] = useState(true);
-  const [searchInput, setSearch] = useState("");
-  const [sortDirection, setSortDirection] = useState(true);
-  const [currentNotebook, setCurrentNotebook] = useState("Main");
+export const NoteModal = (props: Replugged.Components.ModalRootProps & { onClose: () => void }) => {
+  const [sortType, setSortType] = React.useState(true);
+  const [searchInput, setSearch] = React.useState("");
+  const [sortDirection, setSortDirection] = React.useState(true);
+  const [currentNotebook, setCurrentNotebook] = React.useState("Main");
 
-  const forceUpdate = useReducer(() => ({}), {})[1];
-  const notes = noteHandlers.getNotes(false, currentNotebook);
+  const forceUpdate = React.useReducer(() => ({}), {})[1];
+  const notes = noteHandler.getNotes(currentNotebook);
+
   if (!notes) return <></>;
+
   return (
     <ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
       <Flex className="notebook-flex" direction={Flex.Direction.VERTICAL} style={{ width: "100%" }}>
@@ -90,10 +107,7 @@ export const NoteModal = (props) => {
               className={`notebook-heading`}>
               NOTEBOOK
             </Text>
-            <div
-              className="notebook-flex help-icon"
-              name="HelpCircle"
-              onClick={() => openModal(HelpModal)}>
+            <div className="notebook-flex help-icon" onClick={() => openModal(HelpModal)}>
               <HelpIcon />
             </div>
             <div style={{ marginBottom: "10px" }} className="notebook-search">
@@ -114,7 +128,7 @@ export const NoteModal = (props) => {
                 className={`${tabBar} notebook-tabbar`}
                 selectedItem={currentNotebook}
                 onItemSelect={setCurrentNotebook}>
-                {Object.keys(noteHandlers.getNotes(true)).map((notebook) => (
+                {Object.keys(noteHandler.getAllNotes()).map((notebook) => (
                   // @ts-ignore
                   <TabBar.Item
                     id={notebook}
@@ -129,28 +143,28 @@ export const NoteModal = (props) => {
         </div>
         <ModalContent style={{ marginTop: "20px" }}>
           <ErrorBoundary>
-            <NoteBookRender
-              notes={notes}
-              notebook={currentNotebook}
-              updateParent={() => forceUpdate()}
-              sortDirection={sortDirection}
-              sortType={sortType}
-              searchInput={searchInput}
-              closeModal={props.onClose}
-            />
+            {renderNotebook({
+              notes,
+              notebook: currentNotebook,
+              updateParent: () => forceUpdate(),
+              sortDirection: sortDirection,
+              sortType: sortType,
+              searchInput: searchInput,
+              closeModal: props.onClose,
+            })}
           </ErrorBoundary>
         </ModalContent>
       </Flex>
       <ModalFooter>
-        <NotebookManagementButton notebook={currentNotebook} setNotebook={setCurrentNotebook} />
+        <ManageNotebookButton notebook={currentNotebook} setNotebook={setCurrentNotebook} />
         <div className="sort-button-container notebook-display-left">
           <Flex
             align={Flex.Align.CENTER}
             className={quickSelect}
             onClick={(event) => {
               // @ts-ignore
-              open(event, () => (
-                <ContextMenu.ContextMenu onClose={close}>
+              contextMenu.open(event, () => (
+                <ContextMenu.ContextMenu onClose={contextMenu.close} navId="holynotes_sort">
                   <ContextMenu.MenuItem
                     label="Ascending / Date Added"
                     id="ada"
@@ -171,6 +185,7 @@ export const NoteModal = (props) => {
                     label="Descending / Date Added"
                     id="dda"
                     action={() => {
+                      debugger;
                       setSortDirection(false);
                       setSortType(true);
                     }}
@@ -186,11 +201,9 @@ export const NoteModal = (props) => {
                 </ContextMenu.ContextMenu>
               ));
             }}>
-            <Text variant="body" className={quickSelectLabel}>
-              Change Sorting:
-            </Text>
+            <Text className={quickSelectLabel}>Change Sorting:</Text>
             <Flex grow={0} align={Flex.Align.CENTER} className={quickSelectQuick}>
-              <Text variant="body" className={quickSelectValue}>
+              <Text className={quickSelectValue}>
                 {sortDirection ? "Ascending" : "Descending"} /{" "}
                 {sortType ? "Date Added" : "Message Date"}
               </Text>
