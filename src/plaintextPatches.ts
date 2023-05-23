@@ -4,17 +4,17 @@ export default [
     replacements: [
       {
         match: /[^]*function (\w+)\(.\){[^]*?message.*channel.*flashKey[^]*?bg-flash-[^]*?}/,
-        replace: (entireMatch: string, funcName: string): string => {
+        replace: (match: string, funcName: string): string => {
           return (
-            `${entireMatch}` +
-            `function HolyNoteExist(){` +
-            `if (replugged.plugins.getExports("dev.wolfplugs.HolyNotes")){` +
-            `replugged.plugins.getExports("dev.wolfplugs.HolyNotes")?.addCustomExport("ChannelMessage", ${funcName});` +
-            `}else{` +
-            `setTimeout(HolyNoteExist, 1000)` +
-            `}` +
-            `};` +
-            `HolyNoteExist();`
+            `${match}` +
+            "function holyNotesExists(){" +
+            'if (window.replugged.plugins.getExports("dev.wolfplugs.HolyNotes")) {' +
+            `window.replugged.plugins.getExports("dev.wolfplugs.HolyNotes")?.addCustomExport("ChannelMessage", ${funcName});` +
+            "} else {" +
+            "setTimeout(holyNotesExists, 1000)" +
+            "}" +
+            "};" +
+            "holyNotesExists();"
           );
         },
       },
