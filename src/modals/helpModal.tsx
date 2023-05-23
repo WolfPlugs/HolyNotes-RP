@@ -1,17 +1,12 @@
 import { components, webpack } from "replugged";
-import noteHandler from "../../noteHandler";
 
 const { ModalHeader, ModalCloseButton, ModalContent, ModalFooter, ModalRoot } = components.Modal;
-const { Button, FormText, Text } = components;
+const { FormItem, Button, FormText, Text } = components;
 
-const { colorStatusGreen } = await webpack.waitForModule<{
-  colorStatusGreen: string;
-}>(webpack.filters.byProps("colorStatusGreen"));
+const { colorStatusGreen } = webpack.getByProps("colorStatusGreen");
+import NotesHandler from "../noteHandler/index";
 
-export default ({
-  onClose,
-  ...modalProps
-}: Replugged.Components.ModalRootProps & { onClose: () => void }) => {
+export default ({ onClose, ...modalProps }) => {
   return (
     <ModalRoot {...modalProps} className="help-modal" size="medium">
       <ModalHeader className="notebook-header">
@@ -54,10 +49,10 @@ export default ({
       <ModalFooter>
         <div className="notebook-display-left">
           <Button
-            look={Button.Looks.FILLED}
+            look={Button.Looks.GHOST}
             color={Button.Colors.GREEN}
             onClick={() => {
-              noteHandler.refreshAvatars();
+              NotesHandler.refreshAvatars();
             }}>
             Refresh Avatars
           </Button>

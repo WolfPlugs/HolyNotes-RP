@@ -1,46 +1,57 @@
 /* eslint-disable no-use-before-define */
 import { common, components, types, webpack } from "replugged";
+import noteHandler from "../noteHandler";
+import { MyClipboardUtility, getExportsForProto } from "../noteHandler/utils";
+import { customExports } from "../index";
 
-import { getExportsForProto } from "../../utils";
-import { customExports } from "../../index";
-import noteHandler from "../../noteHandler";
+const RoutingUtilsModule = webpack.getBySource("transitionTo - Transitioning to ");
+const RoutingUtils = {
+  transitionToChannel: webpack.getFunctionBySource(
+    RoutingUtilsModule as types.ObjectExports,
+    "transitionTo - Transitioning to ",
+  ),
+};
 
-const { message, groupStart, cozyMessage } = await webpack.waitForModule<{
-  message: string;
-  groupStart: string;
-  cozyMessage: string;
-}>(webpack.filters.byProps("cozyMessage"));
+const Timestamp = webpack.getBySource("parseTwoDigitYear");
+const { message, groupStart, cozyMessage } = webpack.getByProps("cozyMessage");
 
-const Moment = (await webpack.waitForModule(
-  webpack.filters.bySource("parseTwoDigitYear"),
-)) as unknown as Discord.MomentConstructor;
-const User = (await webpack.waitForModule((m) =>
-  Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
-)) as unknown as Discord.UserConstructor;
-const Message = (await webpack.waitForModule((m) =>
+const User = webpack.getModule((m) => Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])));
+
+const Message = await webpack.waitForModule<any>((m) =>
   Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
-)) as unknown as Discord.MessageConstructor;
+);
+
 const Channel = getExportsForProto(
-  await webpack.waitForModule((m) =>
+  await webpack.waitForModule<any>((m) =>
     Boolean(getExportsForProto(m.exports, ["getGuildId", "isForumPost"])),
   ),
   ["getGuildId", "isForumPost"],
-) as unknown as Discord.Channel;
-
-const transitionToChannel = webpack.getFunctionBySource(
-  await webpack.waitForModule<Record<string, types.AnyFunction>>(
-    webpack.filters.bySource("transitionTo - Transitioning to "),
-  ),
-  "transitionTo - Transitioning to ",
 );
 
 // replugged.webpack.getModule((m) => ["getGuildId"].every((p) => Object.values(m.exports).some((m) => m?.prototype?.[p]))).Sf
 
 const {
-  React,
+  React: { useState, useEffect },
   contextMenu: { open, close },
 } = common;
 const { ContextMenu } = components;
+
+//
+interface RenderMessageProps {
+  note: any;
+  notebook: string;
+  updateParent: () => void;
+  fromDeleteModal: boolean;
+  closeModal: () => void;
+}
+
+interface ContextMenuProps {
+  note: any;
+  notebook: string;
+  updateParent: () => void;
+  fromDeleteModal: boolean;
+  closeModal: () => void;
+}
 
 export default ({
   note,
@@ -48,22 +59,12 @@ export default ({
   updateParent,
   fromDeleteModal,
   closeModal,
-}: Replugged.Components.ModalRootProps & {
-  note: HolyNotes.Note;
-  notebook: string;
-  updateParent?: () => void;
-  fromDeleteModal: boolean;
-  closeModal?: () => void;
-}) => {
-  const { ChannelMessage } = customExports as {
-    ChannelMessage: React.FunctionComponent<Discord.ChannelMessageProps>;
-  };
-  const [isHoldingDelete, setHoldingDelete] = React.useState(false);
-
-  React.useEffect(() => {
+}: RenderMessageProps) => {
+  const { ChannelMessage } = customExports;
+  const [isHoldingDelete, setHoldingDelete] = useState(false);
+  useEffect(() => {
     const deleteHandler = (e: { key: string; type: string }) =>
       e.key.toLowerCase() === "delete" && setHoldingDelete(e.type.toLowerCase() === "keydown");
-
     document.addEventListener("keydown", deleteHandler);
     document.addEventListener("keyup", deleteHandler);
 
@@ -72,7 +73,6 @@ export default ({
       document.removeEventListener("keyup", deleteHandler);
     };
   }, []);
-
   return (
     <div
       className="holy-note"
@@ -85,9 +85,10 @@ export default ({
       onClick={() => {
         if (isHoldingDelete && !fromDeleteModal) {
           noteHandler.deleteNote(note.id, notebook);
-          updateParent?.();
+          updateParent();
         }
       }}
+      // eslint-disable-next-line consistent-return
       onContextMenu={(event: any) => {
         if (!fromDeleteModal)
           //@ts-ignore
@@ -103,7 +104,7 @@ export default ({
           ));
       }}>
       <ChannelMessage
-        className={`holy-render ${message} ${groupStart} ${cozyMessage}`}
+        className={["holy-render", message, groupStart, cozyMessage]}
         key={note.id}
         groupId={note.id}
         id={note.id}
@@ -118,8 +119,10 @@ export default ({
             Object.assign(
               { ...note },
               {
+                // @ts-ignore
                 author: new User({ ...note.author }),
-                timestamp: new Moment(new Date(note.timestamp)),
+                // @ts-ignore
+                timestamp: new Timestamp(new Date(note.timestamp)),
                 embeds: note.embeds.map((embed: { timestamp: string | number | Date }) =>
                   embed.timestamp
                     ? Object.assign(embed, {
@@ -137,36 +140,30 @@ export default ({
   );
 };
 
-const NoteContextMenu = (
-  props: Replugged.Components.ContextMenuProps & {
-    updateParent?: () => void;
-    notebook: string;
-    note: HolyNotes.Note;
-    closeModal?: () => void;
-  },
-) => {
-  const { note, notebook, updateParent, closeModal } = props;
-
+const NoteContextMenu = (props: object) => {
+  const { note, notebook, updateParent, closeModal } = props as ContextMenuProps;
   return (
     <ContextMenu.ContextMenu {...props}>
       <ContextMenu.MenuItem
         label="Jump to message"
         id="jump"
         action={() => {
-          transitionToChannel(`/channels/${note.guild_id ?? "@me"}/${note.channel_id}/${note.id}`);
-          closeModal?.();
+          RoutingUtils.transitionToChannel(
+            `/channels/${note.guild_id ?? "@me"}/${note.channel_id}/${note.id}`,
+          );
+          closeModal();
         }}
       />
       <ContextMenu.MenuItem
         label="Copy Text"
         id="copy-text"
-        action={() => DiscordNative.clipboard.copy(note.content)}
+        action={() => MyClipboardUtility.copyToClipboard(note.content)}
       />
       {note?.attachments.length ? (
         <ContextMenu.MenuItem
           label="Copy Attachment URL"
           id="copy-url"
-          action={() => DiscordNative.clipboard.copy(note?.attachments[0].url)}
+          action={() => MyClipboardUtility.copyToClipboard(note?.attachments[0].url)}
         />
       ) : null}
       <ContextMenu.MenuItem
@@ -175,14 +172,14 @@ const NoteContextMenu = (
         id="delete-note"
         action={() => {
           noteHandler.deleteNote(note.id, notebook);
-          updateParent?.();
+          updateParent();
         }}
       />
-      {Object.keys(noteHandler.getAllNotes()).length !== 1 ? (
+      {Object.keys(noteHandler.getNotes(true)).length !== 1 ? (
         <ContextMenu.MenuItem
           label="Move Note"
           id="move-note"
-          children={Object.keys(noteHandler.getAllNotes()).map((key: string) => {
+          children={Object.keys(noteHandler.getNotes(true)).map((key: string) => {
             if (key !== notebook) {
               return (
                 <ContextMenu.MenuItem
@@ -191,7 +188,7 @@ const NoteContextMenu = (
                   key={key}
                   action={() => {
                     noteHandler.moveNote(note, notebook, key);
-                    updateParent?.();
+                    updateParent();
                   }}
                 />
               );
@@ -202,7 +199,7 @@ const NoteContextMenu = (
       <ContextMenu.MenuItem
         label="Copy Id"
         id="copy-id"
-        action={() => DiscordNative.clipboard.copy(note.id)}
+        action={() => MyClipboardUtility.copyToClipboard(note.id)}
       />
     </ContextMenu.ContextMenu>
   );
