@@ -40,8 +40,8 @@ export default ({
       <ModalFooter>
         <Button
           onClick={() => {
-            noteHandler.deleteNotebook(notebook);
             onClose();
+            setTimeout(() => noteHandler.deleteNotebook(notebook), 1000);
           }}
           color={Button.Colors.RED}>
           Delete

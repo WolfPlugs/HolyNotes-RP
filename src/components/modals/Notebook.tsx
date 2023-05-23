@@ -183,7 +183,6 @@ export const NoteModal = (props: Replugged.Components.ModalRootProps & { onClose
                     label="Descending / Date Added"
                     id="dda"
                     action={() => {
-                      debugger;
                       setSortDirection(false);
                       setSortType(true);
                     }}
