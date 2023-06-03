@@ -97,9 +97,9 @@ export default new (class NoteHandler {
   public refreshAvatars = async (): Promise<void> => {
     const notebooks = this.getAllNotes();
 
-    const User = (await webpack.waitForModule((m) =>
+    const User = await webpack.waitForModule((m) =>
       Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
-    ));
+    );
 
     for (const notebook in notebooks)
       for (const noteId in notebooks[notebook]) {
