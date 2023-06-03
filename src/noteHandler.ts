@@ -99,7 +99,7 @@ export default new (class NoteHandler {
 
     const User = (await webpack.waitForModule((m) =>
       Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
-    )) as unknown as Discord.UserConstructor;
+    ));
 
     for (const notebook in notebooks)
       for (const noteId in notebooks[notebook]) {

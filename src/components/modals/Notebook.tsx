@@ -120,23 +120,21 @@ export const NoteModal = (props: Replugged.Components.ModalRootProps & { onClose
             <ModalCloseButton onClick={props.onClose} />
           </ModalHeader>
           <div className={`${tabBarContainer}`}>
-            {
-              <TabBar
-                type="top"
-                look="brand"
-                className={`${tabBar} notebook-tabbar`}
-                selectedItem={currentNotebook}
-                onItemSelect={setCurrentNotebook}>
-                {Object.keys(noteHandler.getAllNotes()).map((notebook) => (
-                  <TabBar.Item
-                    id={notebook}
-                    className={`${tabBarItem} notebook-tabbar-item`}
-                    key={notebook}>
-                    {notebook}
-                  </TabBar.Item>
-                ))}
-              </TabBar>
-            }
+            <TabBar
+              type="top"
+              look="brand"
+              className={`${tabBar} notebook-tabbar`}
+              selectedItem={currentNotebook}
+              onItemSelect={setCurrentNotebook}>
+              {Object.keys(noteHandler.getAllNotes()).map((notebook) => (
+                <TabBar.Item
+                  id={notebook}
+                  className={`${tabBarItem} notebook-tabbar-item`}
+                  key={notebook}>
+                  {notebook}
+                </TabBar.Item>
+              ))}
+            </TabBar>
           </div>
         </div>
         <ModalContent style={{ marginTop: "20px" }}>

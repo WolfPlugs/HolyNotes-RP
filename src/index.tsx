@@ -8,7 +8,10 @@ import { NoteModal } from "./components/modals/Notebook";
 import "./style.css";
 
 const { openModal } = common.modal;
-const { Tooltip } = components;
+const {
+  Tooltip,
+  ContextMenu: { MenuItem },
+} = components;
 
 const inject = new Injector();
 
@@ -30,11 +33,31 @@ export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<voi
     clickable: string;
   }>(webpack.filters.byProps("iconWrapper", "clickable"));
 
-  inject.utils.addPopoverButton((message: Message, channel: Channel) => ({
-    label: "Add Message to Notes",
-    icon: NoteButtonPopover,
-    onClick: () => noteHandler.addNote(channel, message, "Main"),
-  }));
+  // @ts-expect-error - Replugged Types Broke
+  inject.utils.addPopoverButton((message: Message, channel: Channel) => {
+    return {
+      label: "Add Message to Notes",
+      icon: NoteButtonPopover,
+      onClick: () => noteHandler.addNote(channel, message, "Main"),
+    };
+  });
+
+  // @ts-expect-error - Replugged Types Broke
+  inject.utils.addMenuItem(types.ContextMenuTypes.Message, (data) => {
+    return {
+      type: MenuItem,
+      label: "Add Message to",
+      children: Object.keys(noteHandler.getAllNotes()).map((notebook: string) => {
+        return {
+          type: MenuItem,
+          label: notebook,
+          id: notebook,
+          action: () =>
+            noteHandler.addNote(data.channel as Channel, data.message as Message, notebook),
+        };
+      }),
+    };
+  });
 
   inject.after(
     mod,

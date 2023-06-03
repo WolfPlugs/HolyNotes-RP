@@ -14,10 +14,10 @@
     "github": "Tharki-God"
   }
 ],
-  "version": "1.0.7",
+  "version": "1.0.8",
   "updater": {
-    "type": "github",
-    "id": "WolfPlugs/HolyNotes"
+    "type": "store",
+    "id": "dev.wolfplugs.HolyNotes"
   },
   "license": "MIT",
   "type": "replugged-plugin",
