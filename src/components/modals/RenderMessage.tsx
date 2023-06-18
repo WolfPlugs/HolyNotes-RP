@@ -14,14 +14,14 @@ const { message, groupStart, cozyMessage } = await webpack.waitForModule<{
 const Moment = (await webpack.waitForModule(
   webpack.filters.bySource("parseTwoDigitYear"),
 )) as unknown as Discord.MomentConstructor;
-const User = (await webpack.waitForModule((m) =>
+const User = (await webpack.waitForModule((m: any) =>
   Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
 )) as unknown as Discord.UserConstructor;
-const Message = (await webpack.waitForModule((m) =>
+const Message = (await webpack.waitForModule((m: any) =>
   Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
 )) as unknown as Discord.MessageConstructor;
 const Channel = getExportsForProto(
-  await webpack.waitForModule((m) =>
+  await webpack.waitForModule((m: any) =>
     Boolean(getExportsForProto(m.exports, ["getGuildId", "isForumPost"])),
   ),
   ["getGuildId", "isForumPost"],
@@ -124,7 +124,7 @@ export default ({
                   embed.timestamp
                     ? Object.assign(embed, {
                         // @ts-ignore
-                        timestamp: new Timestamp(new Date(embed.timestamp)),
+                        timestamp: new Moment(new Date(embed.timestamp)),
                       })
                     : embed,
                 ),
