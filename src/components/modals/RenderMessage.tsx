@@ -55,9 +55,8 @@ export default ({
   fromDeleteModal: boolean;
   closeModal?: () => void;
 }) => {
-  const { ChannelMessage } = customExports as {
-    ChannelMessage: React.FunctionComponent<Discord.ChannelMessageProps>;
-  };
+  const ChannelMessage = webpack.getByProps("ThreadStarterChatMessage").default
+   
   const [isHoldingDelete, setHoldingDelete] = React.useState(false);
 
   React.useEffect(() => {

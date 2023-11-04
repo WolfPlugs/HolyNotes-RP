@@ -74,7 +74,7 @@ export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<voi
               <div className={`note-button ${iconClasses.iconWrapper} ${iconClasses.clickable}`}>
                 <NoteButton
                   className={`note-button ${iconClasses.icon}`}
-                  //onClick={() => openModal((props) => <NoteModal {...props} />)}
+                  onClick={() => openModal((props) => <NoteModal {...props} />)}
                 />
               </div>
             </Tooltip>,

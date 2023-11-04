@@ -24,6 +24,5 @@
   "type": "replugged-plugin",
   "source": "https://github.com/WolfPlugs/HolyNotes",
   "image": "https://cdn.discordapp.com/attachments/1026314163007529020/1142597240700031097/image.png",
-  "renderer": "src/index.tsx",
-  "plaintextPatches": "src/plaintextPatches.ts"
+  "renderer": "src/index.tsx"
 }
