@@ -22,14 +22,8 @@ const {
   contextMenu,
 } = common;
 
-// const { tabBarContainer, tabBar, tabBarItem, topSectionNormal } = await webpack.waitForModule<{
-//   tabBarContainer: string;
-//   tabBar: string;
-//   tabBarItem: string;
-//   topSectionNormal: string;
-// }>(webpack.filters.byProps("tabBarContainer"));
 const tabBar = "tabBar__35f81"
-const tabBarContainer ="tabBarContainer__63f55"
+const tabBarContainer = "tabBarContainer__63f55"
 const tabBarItem = "tabBarItem_b56b35"
 const topSectionNormal = "topSection_dfb73b"
 
