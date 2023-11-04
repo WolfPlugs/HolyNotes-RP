@@ -1,8 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { common, components, types, webpack } from "replugged";
 
-import { getExportsForProto } from "../../utils";
-import { customExports } from "../../index";
 import noteHandler from "../../noteHandler";
 
 const { message, groupStart, cozyMessage } = await webpack.waitForModule<{
@@ -14,18 +12,11 @@ const { message, groupStart, cozyMessage } = await webpack.waitForModule<{
 const Moment = (await webpack.waitForModule(
   webpack.filters.bySource("parseTwoDigitYear"),
 )) as unknown as Discord.MomentConstructor;
-const User = (await webpack.waitForModule((m: any) =>
-  Boolean(getExportsForProto(m.exports, ["tag", "isClyde"])),
-)) as unknown as Discord.UserConstructor;
-const Message = (await webpack.waitForModule((m: any) =>
-  Boolean(getExportsForProto(m.exports, ["getReaction", "isSystemDM"])),
-)) as unknown as Discord.MessageConstructor;
-const Channel = getExportsForProto(
-  await webpack.waitForModule((m: any) =>
-    Boolean(getExportsForProto(m.exports, ["getGuildId", "isForumPost"])),
-  ),
-  ["getGuildId", "isForumPost"],
-) as unknown as Discord.Channel;
+
+const User = webpack.getBySource("isClyde(){") as unknown as Discord.UserConstructor;
+const Message = webpack.getBySource("isEdited(){") as unknown as Discord.MessageConstructor;
+const Channel = webpack.getByProps("ChannelRecordBase")
+  .ChannelRecordBase as unknown as Discord.Channel;
 
 const transitionTo = webpack.getFunctionBySource(
   await webpack.waitForModule<Record<string, types.AnyFunction>>(
@@ -55,9 +46,8 @@ export default ({
   fromDeleteModal: boolean;
   closeModal?: () => void;
 }) => {
-  const { ChannelMessage } = customExports as {
-    ChannelMessage: React.FunctionComponent<Discord.ChannelMessageProps>;
-  };
+  const ChannelMessage = webpack.getByProps("ThreadStarterChatMessage").default;
+
   const [isHoldingDelete, setHoldingDelete] = React.useState(false);
 
   React.useEffect(() => {
@@ -72,7 +62,6 @@ export default ({
       document.removeEventListener("keyup", deleteHandler);
     };
   }, []);
-
   return (
     <div
       className="holy-note"
