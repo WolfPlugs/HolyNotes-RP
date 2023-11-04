@@ -15,7 +15,8 @@ const Moment = (await webpack.waitForModule(
 
 const User = webpack.getBySource("isClyde(){") as unknown as Discord.UserConstructor;
 const Message = webpack.getBySource("isEdited(){") as unknown as Discord.MessageConstructor;
-const Channel = webpack.getByProps("ChannelRecordBase").ChannelRecordBase as unknown as Discord.Channel;
+const Channel = webpack.getByProps("ChannelRecordBase")
+  .ChannelRecordBase as unknown as Discord.Channel;
 
 const transitionTo = webpack.getFunctionBySource(
   await webpack.waitForModule<Record<string, types.AnyFunction>>(
@@ -45,7 +46,7 @@ export default ({
   fromDeleteModal: boolean;
   closeModal?: () => void;
 }) => {
-  const ChannelMessage = webpack.getByProps("ThreadStarterChatMessage").default
+  const ChannelMessage = webpack.getByProps("ThreadStarterChatMessage").default;
 
   const [isHoldingDelete, setHoldingDelete] = React.useState(false);
 
@@ -111,9 +112,9 @@ export default ({
                 embeds: note.embeds.map((embed: { timestamp: string | number | Date }) =>
                   embed.timestamp
                     ? Object.assign(embed, {
-                      // @ts-ignore
-                      timestamp: new Moment(new Date(embed.timestamp)),
-                    })
+                        // @ts-ignore
+                        timestamp: new Moment(new Date(embed.timestamp)),
+                      })
                     : embed,
                 ),
               },

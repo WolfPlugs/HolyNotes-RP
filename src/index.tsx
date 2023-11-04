@@ -26,7 +26,6 @@ export const addCustomExport = (
 type ChannelHeaderModule = Record<string, (channelHeader: Discord.ChannelHeader) => JSX.Element>;
 
 export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<void> => {
-
   const iconClasses = await webpack.waitForModule<{
     icon: string;
     iconWrapper: string;

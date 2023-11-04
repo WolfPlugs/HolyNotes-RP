@@ -22,11 +22,10 @@ const {
   contextMenu,
 } = common;
 
-const tabBar = "tabBar__35f81"
-const tabBarContainer = "tabBarContainer__63f55"
-const tabBarItem = "tabBarItem_b56b35"
-const topSectionNormal = "topSection_dfb73b"
-
+const tabBar = "tabBar__35f81";
+const tabBarContainer = "tabBarContainer__63f55";
+const tabBarItem = "tabBarItem_b56b35";
+const topSectionNormal = "topSection_dfb73b";
 
 const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow } =
   await webpack.waitForModule<{
