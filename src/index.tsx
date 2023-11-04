@@ -26,7 +26,7 @@ export const addCustomExport = (
 type ChannelHeaderModule = Record<string, (channelHeader: Discord.ChannelHeader) => JSX.Element>;
 
 export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<void> => {
-  const componentName = Object.entries(mod).find(([, v]) => typeof v === "function")?.[0] as string;
+
   const iconClasses = await webpack.waitForModule<{
     icon: string;
     iconWrapper: string;
@@ -61,7 +61,7 @@ export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<voi
 
   inject.after(
     mod,
-    componentName,
+    "default",
     /* Only using first member so only typing first member */
     (args: [Discord.ChannelHeader, ...unknown[]], res: JSX.Element) => {
       /* Catching just in case */
@@ -74,7 +74,7 @@ export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<voi
               <div className={`note-button ${iconClasses.iconWrapper} ${iconClasses.clickable}`}>
                 <NoteButton
                   className={`note-button ${iconClasses.icon}`}
-                  onClick={() => openModal((props) => <NoteModal {...props} />)}
+                  //onClick={() => openModal((props) => <NoteModal {...props} />)}
                 />
               </div>
             </Tooltip>,
@@ -89,7 +89,7 @@ export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<voi
 export const start = async (): Promise<void> =>
   await injectChannelHeader(
     await webpack.waitForModule<ChannelHeaderModule>(
-      webpack.filters.bySource("HEADER_BAR).AnalyticsLocationProvider"),
+      webpack.filters.bySource("default.HEADER_BAR)"),
     ),
   );
 
