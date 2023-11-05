@@ -80,3 +80,28 @@ $modifier: var(--background-modifier-accent);
 .holy-note [class*="messageListItem"] {
   list-style-type: none;
 }
+
+
+.notebook-tabbar-Bar {
+  align-items: stretch;
+  display: flex;
+  gap: 40px;
+}
+
+.notebook-tabbar-Container {
+  border-bottom: 1px solid var(--profile-body-divider-color);
+  margin: 20px 12px 0;
+  padding: 0;
+}
+
+.notebook-tabbar-barItem {
+  display: inline;
+  border-bottom: 2px solid transparent;
+  height: 39px;
+  font-size: 14px;
+}
+
+.notebook-topSection {
+  margin-bottom: calc(-8px + .5*(var(--custom-user-profile-modal-header-avatar-size) + var(--custom-user-profile-modal-header-total-avatar-border-size)));
+  z-index: 1;
+}

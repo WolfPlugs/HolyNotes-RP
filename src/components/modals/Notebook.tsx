@@ -22,11 +22,6 @@ const {
   contextMenu,
 } = common;
 
-const tabBar = "tabBar__35f81";
-const tabBarContainer = "tabBarContainer__63f55";
-const tabBarItem = "tabBarItem_b56b35";
-const topSectionNormal = "topSection_dfb73b";
-
 const { quickSelect, quickSelectLabel, quickSelectQuick, quickSelectValue, quickSelectArrow } =
   await webpack.waitForModule<{
     quickSelect: string;
@@ -97,7 +92,7 @@ export const NoteModal = (props: Replugged.Components.ModalRootProps & { onClose
   return (
     <ModalRoot {...props} className="notebook" size="large" style={{ borderRadius: "8px" }}>
       <Flex className="notebook-flex" direction={Flex.Direction.VERTICAL} style={{ width: "100%" }}>
-        <div className={topSectionNormal}>
+        <div className={`notebook-topSection`}>
           <ModalHeader className={`notebook-header-main`}>
             <Text
               variant="heading-lg/semibold"
@@ -117,17 +112,17 @@ export const NoteModal = (props: Replugged.Components.ModalRootProps & { onClose
             </div>
             <ModalCloseButton onClick={props.onClose} />
           </ModalHeader>
-          <div className={`${tabBarContainer}`}>
+          <div className={`notebook-tabbar-Container`}>
             <TabBar
               type="top"
               look="brand"
-              className={`${tabBar} notebook-tabbar`}
+              className={`notebook-tabbar-Bar notebook-tabbar`}
               selectedItem={currentNotebook}
               onItemSelect={setCurrentNotebook}>
               {Object.keys(noteHandler.getAllNotes()).map((notebook) => (
                 <TabBar.Item
                   id={notebook}
-                  className={`${tabBarItem} notebook-tabbar-item`}
+                  className={`notebook-tabbar-barItem notebook-tabbar-item`}
                   key={notebook}>
                   {notebook}
                 </TabBar.Item>
