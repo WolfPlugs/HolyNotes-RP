@@ -139,7 +139,7 @@ const NoteContextMenu = (
   return (
     <ContextMenu.ContextMenu {...props}>
       <ContextMenu.MenuItem
-        label="Jump to message"
+        label="Jump To Message"
         id="jump"
         action={() => {
           transitionTo(`/channels/${note.guild_id ?? "@me"}/${note.channel_id}/${note.id}`);
@@ -175,7 +175,7 @@ const NoteContextMenu = (
             if (key !== notebook) {
               return (
                 <ContextMenu.MenuItem
-                  label={`Move to ${key}`}
+                  label={`Move To ${key}`}
                   id={key}
                   key={key}
                   action={() => {
@@ -189,7 +189,7 @@ const NoteContextMenu = (
         />
       ) : null}
       <ContextMenu.MenuItem
-        label="Copy Id"
+        label="Copy ID"
         id="copy-id"
         action={() => DiscordNative.clipboard.copy(note.id)}
       />

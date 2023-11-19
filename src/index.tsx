@@ -45,7 +45,7 @@ export const injectChannelHeader = async (mod: ChannelHeaderModule): Promise<voi
   inject.utils.addMenuItem(types.ContextMenuTypes.Message, (data) => {
     return {
       type: MenuItem,
-      label: "Add Message to",
+      label: "Add Message To",
       children: Object.keys(noteHandler.getAllNotes()).map((notebook: string) => {
         return {
           type: MenuItem,
