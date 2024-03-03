@@ -66,7 +66,7 @@ const renderNotebook = ({
   if (sortType)
     messageArray.sort(
       (a, b) =>
-        new Date(b.props.note.timestamp).getTime() - new Date(a.props.note.timestamp).getTime(),
+        new Date(b.props.note?.timestamp)?.getTime() - new Date(a.props.note?.timestamp)?.getTime(),
     );
 
   if (sortDirection) messageArray.reverse();

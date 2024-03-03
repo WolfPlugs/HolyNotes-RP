@@ -9,9 +9,9 @@ const { message, groupStart, cozyMessage } = await webpack.waitForModule<{
   cozyMessage: string;
 }>(webpack.filters.byProps("cozyMessage"));
 
-const Moment = (await webpack.waitForModule(
-  webpack.filters.bySource("parseTwoDigitYear"),
-)) as unknown as Discord.MomentConstructor;
+// const Moment = (await webpack.waitForModule(
+//   webpack.filters.bySource("parseTwoDigitYear"),
+// )) as unknown as Discord.MomentConstructor;
 
 const User = webpack.getBySource("isClyde(){") as unknown as Discord.UserConstructor;
 const Message = webpack.getBySource("isEdited(){") as unknown as Discord.MessageConstructor;
@@ -108,7 +108,7 @@ export default ({
               { ...note },
               {
                 author: new User({ ...note.author }),
-                timestamp: new Moment(new Date(note.timestamp)),
+                timestamp: new Date(note.timestamp),
                 embeds: note.embeds.map((embed: { timestamp: string | number | Date }) =>
                   embed.timestamp
                     ? Object.assign(embed, {
