@@ -1,6 +1,6 @@
 {
   "name": "holynotes",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Holy Notes allows you to save messages",
   "engines": {
     "node": ">=18.0.0",
